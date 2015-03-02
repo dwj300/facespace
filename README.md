@@ -22,10 +22,10 @@ Welcome to facespace.
    `$ pip install -r requirements.txt`
 
 7. Migrate (create) db
-   `./manage.py migrate`
+   `$ facespace/manage.py migrate`
 
 8. Run the development server
-   `$ python manage.py runserver`
+   `$ facespace/manage.py runserver`
 
 9. Create more models!
 
