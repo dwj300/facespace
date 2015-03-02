@@ -1,9 +1,32 @@
 Welcome to facespace.
+##Prerequisites:
+  * Python 2.7
+  * Pip
+  * Virtualenv
 
-1.) $ git clone facespace.git
-2.) $ cd facespace
-3.) $ virtualenv .
-4.) $ source bin/activate
-4.) $ pip install -r requirements.txt
-5.) $ ./manage.py makemigrations
-6.) $ ./manage.py migrate
+##To get started:
+
+1. Clone the repository:
+   `$ git clone git@github.com:dwj300/facespace.git`
+
+2. Change into current working directory:
+   `$ cd facespace`
+
+3. Create a virtual environment:
+   `$ virtualenv .`
+
+4. Activate virtual environment:
+   `$ source bin/activate`
+
+6. Install requirements:
+   `$ pip install -r requirements.txt`
+
+7. Migrate (create) db
+   `./manage.py migrate`
+
+8. Run the development server
+   `$ python manage.py runserver`
+
+9. Create more models!
+
+10. Drop the "the"
