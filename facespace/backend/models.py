@@ -11,6 +11,7 @@ class Comment(models.Model):
 
 class Entity(models.Model):
     time_created = models.DateTimeField(auto_now_add=True)
+    user_id = models.ForeignKey('FaceSpaceUser')
 
     class Meta:
         verbose_name_plural = 'Entities'
@@ -21,6 +22,22 @@ class FaceSpaceUser(AbstractUser):
     is_male = models.BooleanField(default=True)
     relationship_with = models.ManyToManyField("self", through='Romance', symmetrical=False, related_name='relationship')
     friends_with = models.ManyToManyField("self", through='Friendship', symmetrical=False, related_name='friend')
+    profile_picture = models.ForeignKey('Photo')
+
+
+class Like(models.Model):
+    user_id = models.ForeignKey('FaceSpaceUser')
+    entity_id = models.ForeignKey('Entity')
+    is_positive = models.BooleanField()
+
+
+class Photo(Entity):
+    caption = models.CharField()
+    file_name = models.CharField()
+
+
+class Status(Entity):
+    text = models.TextField()
 
 
 class Romance(models.Model):
