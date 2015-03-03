@@ -1,6 +1,28 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
+class Interest(models.Model):
+    name = models.CharField(max_length=50)
+    parent = models.ForeignKey('self', related_name="children", null=True)
+
+
+class FaceSpaceUser(AbstractUser):
+    birthday = models.DateField()
+    is_male = models.BooleanField(default=True)
+    relationship_with = models.ManyToManyField("self", through='Romance', symmetrical=False, related_name='relationship')
+    friends_with = models.ManyToManyField("self", through='Friendship', symmetrical=False, related_name='friend')
+    interested_in = models.ManyToManyField('Interest')
+    profile_picture = models.ForeignKey('Photo')
+
+
+class Entity(models.Model):
+    time_created = models.DateTimeField(auto_now_add=True)
+    user_id = models.ForeignKey('FaceSpaceUser')
+
+    class Meta:
+        verbose_name_plural = 'Entities'
+
+
 class Ad(models.Model):
     content_link = models.URLField()
     owner = models.ForeignKey('FaceSpaceUser', null=False)
@@ -15,27 +37,10 @@ class AdSlot(models.Model):
 
 
 class Comment(models.Model):
-    user_id = models.ForeignKey('FaceSpaceUser')
-    entity_id = models.OneToOneField('Entity')
+    user_id = models.ForeignKey('FaceSpaceUser', null=False)
+    entity_id = models.ForeignKey('Entity')
     time_created = models.DateTimeField(auto_now_add=True)
     text = models.TextField()
-
-
-class Entity(models.Model):
-    time_created = models.DateTimeField(auto_now_add=True)
-    user_id = models.ForeignKey('FaceSpaceUser')
-
-    class Meta:
-        verbose_name_plural = 'Entities'
-
-
-class FaceSpaceUser(AbstractUser):
-    birthday = models.DateField()
-    is_male = models.BooleanField(default=True)
-    relationship_with = models.ManyToManyField("self", through='Romance', symmetrical=False, related_name='relationship')
-    friends_with = models.ManyToManyField("self", through='Friendship', symmetrical=False, related_name='friend')
-    interested_in = models.ManyToManyField('Interest')
-    profile_picture = models.ForeignKey('Photo')
 
 
 class Friendship(models.Model):
@@ -47,15 +52,16 @@ class Friendship(models.Model):
         unique_together = ('from_friend', 'to_friend')
 
 
-class Interest(models.Model):
-    name = models.CharField(max_length=50)
-    parent = models.ForeignKey('self', related_name="children", null=True)
+
 
 
 class Like(models.Model):
     user_id = models.ForeignKey('FaceSpaceUser')
     entity_id = models.ForeignKey('Entity')
-    is_positive = models.BooleanField()
+    is_positive = models.BooleanField(default=True)
+
+    class Meta:
+        unique_together = ('user_id', 'entity_id')
 
 
 class Photo(Entity):
