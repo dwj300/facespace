@@ -6,3 +6,14 @@ class FaceSpaceUser(AbstractUser):
     birthday = models.DateField()
     is_male = models.BooleanField(default=True)
 
+
+class Entities(models.Model):
+	time_created = models.DateTimeField()
+
+
+class Likes(models.Model):
+	pass
+
+
+class Comments(models.Model):
+	pass
