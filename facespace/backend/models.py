@@ -18,7 +18,7 @@ class FaceSpaceUser(AbstractUser):
     is_male = models.BooleanField(default=True)
     relationship_with = models.ManyToManyField("self", through='Romance', symmetrical=False, related_name='relationship')
     friends_with = models.ManyToManyField("self", through='Friendship', symmetrical=False, related_name='friend')
-
+    interested_in = models.ManyToManyField('Interest')
 
 class Romance(models.Model):
     DATING = 'Dating'
@@ -68,4 +68,4 @@ class Ad(models.Model):
 class Like(models.Model):
 	user_id = models.ForeignKey('FaceSpaceUser')
 	entity_id = models.ForeignKey('Entity')
-	is_positive = models.BooleanField()
+	is_positive = models.BooleanField(default=True)
