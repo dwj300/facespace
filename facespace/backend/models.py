@@ -1,6 +1,18 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
+class Ad(models.Model):
+    content_link = models.URLField()
+    owner = models.ForeignKey('FaceSpaceUser', null=False)
+
+
+class AdSlot(models.Model):
+    bid_time = models.DateTimeField()
+    bid_price = models.DecimalField(max_digits=9, decimal_places=2)
+    interest = models.OneToOneField('Interest')
+    holds = models.ForeignKey('Ad', related_name="holding_ad_slots")
+    will_hold = models.ForeignKey('Ad', related_name="will_hold_ad_slots")
+
 
 class Comment(models.Model):
     user_id = models.ForeignKey('FaceSpaceUser')
@@ -11,6 +23,7 @@ class Comment(models.Model):
 
 class Entity(models.Model):
     time_created = models.DateTimeField(auto_now_add=True)
+    user_id = models.ForeignKey('FaceSpaceUser')
 
     class Meta:
         verbose_name_plural = 'Entities'
@@ -22,6 +35,33 @@ class FaceSpaceUser(AbstractUser):
     relationship_with = models.ManyToManyField("self", through='Romance', symmetrical=False, related_name='relationship')
     friends_with = models.ManyToManyField("self", through='Friendship', symmetrical=False, related_name='friend')
     interested_in = models.ManyToManyField('Interest')
+    profile_picture = models.ForeignKey('Photo')
+
+
+class Friendship(models.Model):
+    from_friend = models.ForeignKey('FaceSpaceUser', related_name='from_friend')
+    to_friend = models.ForeignKey('FaceSpaceUser', related_name='to_friend')
+    since = models.DateField()
+
+    class Meta:
+        unique_together = ('from_friend', 'to_friend')
+
+
+class Interest(models.Model):
+    name = models.CharField(max_length=50)
+    parent = models.ForeignKey('self', related_name="children", null=True)
+
+
+class Like(models.Model):
+    user_id = models.ForeignKey('FaceSpaceUser')
+    entity_id = models.ForeignKey('Entity')
+    is_positive = models.BooleanField()
+
+
+class Photo(Entity):
+    caption = models.TextField()
+    file_name = models.CharField(max_length=75)
+
 
 class Romance(models.Model):
     DATING = 'Dating'
@@ -41,34 +81,5 @@ class Romance(models.Model):
         unique_together = ('from_partner', 'to_partner')
 
 
-class Friendship(models.Model):
-    from_friend = models.ForeignKey('FaceSpaceUser', related_name='from_friend')
-    to_friend = models.ForeignKey('FaceSpaceUser', related_name='to_friend')
-    since = models.DateField()
-
-    class Meta:
-        unique_together = ('from_friend', 'to_friend')
-
-
-class AdSlot(models.Model):
-    bid_time = models.DateTimeField()
-    bid_price = models.DecimalField(max_digits=9, decimal_places=2)
-    interest = models.OneToOneField('Interest')
-    holds = models.ForeignKey('Ad', related_name="holding_ad_slots")
-    will_hold = models.ForeignKey('Ad', related_name="will_hold_ad_slots")
-
-
-class Interest(models.Model):
-    name = models.CharField(max_length=50)
-    parent = models.ForeignKey('self', related_name="children", null=True)
-
-
-class Ad(models.Model):
-    content_link = models.URLField()
-    owner = models.ForeignKey('FaceSpaceUser', null=False)
-
-
-class Like(models.Model):
-    user_id = models.ForeignKey('FaceSpaceUser')
-    entity_id = models.ForeignKey('Entity')
-    is_positive = models.BooleanField()
+class Status(Entity):
+    text = models.TextField()
