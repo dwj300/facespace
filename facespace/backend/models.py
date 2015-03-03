@@ -3,16 +3,16 @@ from django.contrib.auth.models import AbstractUser
 
 
 class Comment(models.Model):
-	user_id = models.ForeignKey('FaceSpaceUser')
-	entity_id = models.OneToOneField(Entity)
-	time_created = models.DateTimeField(auto_now_add=True)
-	text = models.TextField()
+    user_id = models.ForeignKey('FaceSpaceUser')
+    entity_id = models.OneToOneField('Entity')
+    time_created = models.DateTimeField(auto_now_add=True)
+    text = models.TextField()
 
 
 class Entity(models.Model):
-	time_created = models.DateTimeField(auto_now_add=True)
+    time_created = models.DateTimeField(auto_now_add=True)
 
-	class Meta:
+    class Meta:
         verbose_name_plural = 'Entities'
 
 
@@ -22,6 +22,6 @@ class FaceSpaceUser(AbstractUser):
 
 
 class Like(models.Model):
-	user_id = models.ForeignKey('FaceSpaceUser')
-	entity_id = models.ForeignKey('Entity')
-	is_positive = models.BooleanField()
+    user_id = models.ForeignKey('FaceSpaceUser')
+    entity_id = models.ForeignKey('Entity')
+    is_positive = models.BooleanField()
