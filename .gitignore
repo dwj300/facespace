@@ -5,3 +5,4 @@ include/*
 .env
 *.pyc
 .DS_Store
+venv/
