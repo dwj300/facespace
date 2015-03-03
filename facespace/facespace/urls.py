@@ -2,9 +2,8 @@ from django.conf.urls import patterns, include, url
 from django.contrib import admin
 
 urlpatterns = patterns('',
-    # Examples:
-    # url(r'^$', 'facespace.views.home', name='home'),
-    # url(r'^blog/', include('blog.urls')),
-
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^frontend/', include('frontend.urls', namespace='frontend', app_name='frontend')),
+    url(r'^api/', include('api.urls', namespace='api', app_name='api')),
+    url(r'^$', 'frontend.views.index', name='index'),
 )
