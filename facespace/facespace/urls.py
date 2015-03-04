@@ -6,4 +6,7 @@ urlpatterns = patterns('',
     url(r'^frontend/', include('frontend.urls', namespace='frontend', app_name='frontend')),
     url(r'^api/', include('api.urls', namespace='api', app_name='api')),
     url(r'^$', 'frontend.views.index', name='index'),
+    url(r'^home/$', 'frontend.views.home', name='home'),
+	url(r'^login/$', 'django.contrib.auth.views.login', name='login'),
+	url(r'^logout/$', 'django.contrib.auth.views.logout', {'next_page': '/'}, name='logout'),
 )
