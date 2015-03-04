@@ -3,6 +3,10 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
     <title>the facespace</title>
     <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
     <link href="{% static 'css/index.css' %}" rel="stylesheet">
@@ -22,41 +26,21 @@
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
             <li class="active"><a href="#">Home</a></li>
-            <li><a href="{% url 'home' %}">Login</a></li>
+            {% if user.is_authenticated %}
+            <li><a href="{% url 'logout' %}">Logout</a></li>
+            {% else %}
+            <li><a href="{% url 'login' %}">Login</a></li>
+            {% endif %}
           </ul>
         </div>
       </div>
     </nav>
 
     <div class="container">
-
-		<h2>Login</h2>
-
-		{% if form.errors %}
-		<p>Your username and password didn't match. Please try again.</p>
-		{% endif %}
-
-		<form method="post" action="{% url 'django.contrib.auth.views.login' %}">
-		  {% csrf_token %}
-		  <table>
-		    <tr>
-		      <td>{{ form.username.label_tag }}</td>
-		      <td>{{ form.username }}</td>
-		    </tr>
-		    <tr>
-		      <td>{{ form.password.label_tag }}</td>
-		      <td>{{ form.password }}</td>
-		    </tr>
-		  </table>
-		  
-		  <input type="submit" value="login" />
-		  <input type="hidden" name="next" value="{{ next }}" />
-		</form>
-	</div>
-
+    {% block content %}{% endblock %}
+    </div>
 
     <script src="{% static 'js/jquery-2.1.3.min.js' %}"></script>
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
   </body>
 </html>
-

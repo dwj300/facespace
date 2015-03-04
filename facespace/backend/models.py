@@ -55,9 +55,6 @@ class Friendship(models.Model):
         unique_together = ('from_friend', 'to_friend')
 
 
-
-
-
 class Like(models.Model):
     user_id = models.ForeignKey('FaceSpaceUser')
     entity_id = models.ForeignKey('Entity')
