@@ -22,11 +22,11 @@ Welcome to facespace.
    `$ pip install -r requirements.txt`
 
 7. Migrate (create) db
-   `$ facespace/manage.py migrate`
+   `$ ./manage.py migrate`
 
 8. Run the development server
-   `$ facespace/manage.py runserver`
+   `$ ./manage.py runserver`
 
-9. Create more models!
+9. Write some baller code. Check out https://facebook.com and https://myspace.com for inspiration
 
 10. Drop the "the"
