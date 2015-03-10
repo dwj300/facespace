@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="index">
-  <h1>Welcome, {{ user.first_name }}, to the facespace newsfeed.</h1>
+  <h1>Welcome, <a href="{% url 'profile' user.username %}">{{ user.first_name }}</a>, to the facespace newsfeed.</h1>
   <p class="lead">U se this document as a way to quickly start any new project.<br> All you get is this text and a mostly barebones HTML document.</p>
 </div>
 {% endblock %}

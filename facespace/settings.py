@@ -38,6 +38,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'debug_toolbar',
     'stronghold',
     'backend',
     'frontend',
@@ -65,7 +66,7 @@ WSGI_APPLICATION = 'facespace.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql', 
+        'ENGINE': 'django.db.backends.mysql',
         'NAME': 'facespace',
         'USER': 'root',
         'PASSWORD': '',
