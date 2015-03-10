@@ -1,7 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="index">
-  <h1>Welcome, {{ user.first_name }}, to your profile.</h1>
+  <h1>Welcome, {{ facespaceuser.first_name }}, to your profile.</h1>
   <p class="lead">Some blah goes here.
+  <h2>Friends</h2>
+  {% for friend in facespaceuser.friends.all %}
+  <p>{{ friend.first_name }}</p><br>
+  {% endfor %}
 </div>
 {% endblock %}

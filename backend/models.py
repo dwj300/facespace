@@ -12,10 +12,10 @@ class Interest(models.Model):
 class FaceSpaceUser(AbstractUser):
     birthday = models.DateField()
     is_male = models.BooleanField(default=True)
-    profile_picture = models.ForeignKey('Photo', null=True)
+    profile_picture = models.ForeignKey('Photo', null=True, blank=True)
     relationship_with = models.ManyToManyField("self", through='Romance', symmetrical=False, related_name='relationship')
-    friends_with = models.ManyToManyField("self", through='Friendship', symmetrical=False, related_name='friend')
-    interested_in = models.ManyToManyField('Interest')
+    friends = models.ManyToManyField("self", through='Friendship', symmetrical=False, related_name='friend') # todo: rename friends
+    interests = models.ManyToManyField('Interest', blank=True) # todo: rename to interests?
 
     REQUIRED_FIELDS = ['email', 'first_name', 'last_name', 'birthday', 'is_male']
 

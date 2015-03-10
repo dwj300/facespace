@@ -1,0 +1,20 @@
+In this file, lets put everything to do, organized by page.
+If it doesn't fall under a specific page, put it under 'General'.
+
+General:
+    add status of friendship. I.e. we need pending, and a way for users to accept / reject a friendship.
+    clean up admin interface (also add unicode method to all models)
+
+Index:
+
+Homepage (newsfeed):
+
+Profile Page (self):
+
+Profile Page (other):
+    add ability to friend someone.
+
+Interest pages:
+    add ads
+
+Add sales page (or something like it...):
