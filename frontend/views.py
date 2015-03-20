@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from stronghold.decorators import public
 from backend.models import FaceSpaceUser, Interest
-
+from django.db.models import Q
 # Create your views here.
 
 
@@ -25,6 +25,7 @@ def profile(request, username):
 
     return render(request, 'profile.html', params)
 
+
 def interest(request, interest_id):
     params = {}
     try:
@@ -36,3 +37,15 @@ def interest(request, interest_id):
         pass
 
     return render(request, 'interest.html', params)
+
+
+def search(request):
+    query = request.GET['query']
+    terms = query.split(' ')
+    people = FaceSpaceUser.objects.all()
+    for term in terms:
+        people = people.filter(Q(first_name__icontains=term) | Q(last_name__icontains=term))
+
+    params = {'results': people}
+
+    return render(request, 'search.html', params)
