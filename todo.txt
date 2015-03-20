@@ -9,6 +9,8 @@ Index:
 
 Homepage (newsfeed):
 
+Registration:
+
 Profile Page (self):
 
 Profile Page (other):
@@ -18,3 +20,7 @@ Interest pages:
     add ads
 
 Add sales page (or something like it...):
+
+Storing images
+
+Search
