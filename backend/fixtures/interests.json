@@ -1,0 +1,113 @@
+[
+{
+    "fields": {
+        "name": "Interests",
+        "parent": null
+    },
+    "model": "backend.interest",
+    "pk": 1
+},
+{
+    "fields": {
+        "name": "Sports",
+        "parent": 1
+    },
+    "model": "backend.interest",
+    "pk": 2
+},
+{
+    "fields": {
+        "name": "Music",
+        "parent": 1
+    },
+    "model": "backend.interest",
+    "pk": 3
+},
+{
+    "fields": {
+        "name": "Art",
+        "parent": 1
+    },
+    "model": "backend.interest",
+    "pk": 4
+},
+{
+    "fields": {
+        "name": "Board Games",
+        "parent": 1
+    },
+    "model": "backend.interest",
+    "pk": 5
+},
+{
+    "fields": {
+        "name": "Tech",
+        "parent": 1
+    },
+    "model": "backend.interest",
+    "pk": 6
+},
+{
+    "fields": {
+        "name": "Home Improvement",
+        "parent": 1
+    },
+    "model": "backend.interest",
+    "pk": 7
+},
+{
+    "fields": {
+        "name": "Basketball",
+        "parent": 2
+    },
+    "model": "backend.interest",
+    "pk": 8
+},
+{
+    "fields": {
+        "name": "Baseball",
+        "parent": 2
+    },
+    "model": "backend.interest",
+    "pk": 9
+},
+{
+    "fields": {
+        "name": "Football",
+        "parent": 2
+    },
+    "model": "backend.interest",
+    "pk": 10
+},
+{
+    "fields": {
+        "name": "Rock & Roll",
+        "parent": 3
+    },
+    "model": "backend.interest",
+    "pk": 11
+},
+{
+    "fields": {
+        "name": "Pop",
+        "parent": 3
+    },
+    "model": "backend.interest",
+    "pk": 12
+},
+{
+    "fields": {
+        "name": "Apple",
+        "parent": 6
+    },
+    "model": "backend.interest",
+    "pk": 13
+},
+{
+    "fields": {
+        "name": "Microsoft",
+        "parent": 6
+    },
+    "model": "backend.interest",
+    "pk": 14
+}]
