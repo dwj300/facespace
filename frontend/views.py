@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from stronghold.decorators import public
 from backend.models import FaceSpaceUser
-
+from django.db.models import Q
 # Create your views here.
 
 
@@ -24,3 +24,14 @@ def profile(request, username):
         pass
 
     return render(request, 'profile.html', params)
+
+def search(request):
+    query = request.GET['query']
+    terms = query.split(' ')
+    people = FaceSpaceUser.objects.all()
+    for term in terms:
+        people = people.filter(Q(first_name__icontains=term) | Q(last_name__icontains=term))
+
+    params = {'results': people}
+
+    return render(request, 'search.html', params)

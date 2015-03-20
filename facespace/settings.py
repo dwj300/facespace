@@ -67,7 +67,7 @@ WSGI_APPLICATION = 'facespace.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'facespace',
+        'NAME': 'fs1',
         'USER': 'root',
         'PASSWORD': '',
         'HOST': 'localhost',
