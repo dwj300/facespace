@@ -2,10 +2,17 @@
 {% block content %}
 <div class="index">
   <h1>Welcome, {{ facespaceuser.first_name }}, to your profile.</h1>
+  <img src="{{ user.profile_picture.url }}">
   <p class="lead">Some blah goes here.
   <h2>Friends</h2>
   {% for friend in facespaceuser.friends.all %}
   <p>{{ friend.first_name }}</p><br>
   {% endfor %}
+  <h2>Upload photo</h2>
+  <form method="post" action="{% url 'upload' %}" enctype="multipart/form-data">
+  {% csrf_token %}
+  <input type="file" name="photo">
+  <input type="submit" value="Upload">
+  </form>
 </div>
 {% endblock %}

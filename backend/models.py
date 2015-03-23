@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-
+from django.conf import settings
 
 class Interest(models.Model):
     name = models.CharField(max_length=50)
@@ -98,8 +98,11 @@ class Like(models.Model):
 
 class Photo(Entity):
     caption = models.TextField()
-    file_name = models.CharField(max_length=75)
     image = models.ImageField(upload_to="photos")
+
+    @property
+    def url(self):
+        return '%s%s' % (settings.MEDIA_URL, self.image.url)
     
     def __unicode__(self):
         return self.caption[:10]
