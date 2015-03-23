@@ -97,4 +97,8 @@ AUTH_USER_MODEL = 'backend.FaceSpaceUser'
 
 LOGIN_URL=reverse_lazy('login')
 LOGIN_REDIRECT_URL = reverse_lazy('home')
-LOGOUT_URL=reverse_lazy('logout')
+LOGOUT_URL = reverse_lazy('logout')
+
+ENV_PATH = os.path.abspath(os.path.dirname(__file__))
+MEDIA_ROOT = os.path.join(ENV_PATH, 'media/')
+MEDIA_URL = "media/"

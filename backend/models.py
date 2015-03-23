@@ -17,8 +17,8 @@ class FaceSpaceUser(AbstractUser):
     relationship_with = models.ManyToManyField(
         "self", through='Romance', symmetrical=False, related_name='relationship')
     friends = models.ManyToManyField(
-        "self", through='Friendship', symmetrical=False, related_name='friend')  # todo: rename friends
-    interests = models.ManyToManyField('Interest', blank=True)  # todo: rename to interests?
+        "self", through='Friendship', symmetrical=False, related_name='friend')
+    interests = models.ManyToManyField('Interest', blank=True)
 
     REQUIRED_FIELDS = ['email', 'first_name', 'last_name', 'birthday', 'is_male']
 
@@ -96,7 +96,8 @@ class Like(models.Model):
 class Photo(Entity):
     caption = models.TextField()
     file_name = models.CharField(max_length=75)
-
+    image = models.ImageField(upload_to="photos")
+    
     def __unicode__(self):
         return self.caption[:10]
 

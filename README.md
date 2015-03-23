@@ -6,6 +6,9 @@ Welcome to facespace.
 
 ##To get started:
 
+0. Install the imaging dependencies:
+   `$ brew install libtiff libjpeg webp little-cms2`
+
 1. Clone the repository:
    `$ git clone git@github.com:dwj300/facespace.git`
 
