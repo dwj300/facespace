@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from stronghold.decorators import public
-from backend.models import FaceSpaceUser
+from backend.models import FaceSpaceUser, Interest
 from django.db.models import Q
 # Create your views here.
 
@@ -24,6 +24,20 @@ def profile(request, username):
         pass
 
     return render(request, 'profile.html', params)
+
+
+def interest(request, interest_id):
+    params = {}
+    try:
+        interest = Interest.objects.get(id=interest_id)
+        params['interest'] = interest
+        child_interests = Interest.objects.filter(parent__id=interest_id)
+        params['child_interests'] = child_interests
+    except:
+        pass
+
+    return render(request, 'interest.html', params)
+
 
 def search(request):
     query = request.GET['query']

@@ -4,7 +4,10 @@ from django.contrib.auth.models import AbstractUser
 
 class Interest(models.Model):
     name = models.CharField(max_length=50)
-    parent = models.ForeignKey('self', related_name="children", null=True)
+    parent = models.ForeignKey('self', related_name="children", null=True, blank=True)
+
+    def __unicode__(self):
+        return self.name
 
     class Meta:
         db_table = 'interests'

@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="index">
+  <h1>{{ interest.name }}</h1>
+  {% for child in child_interests.all %}
+    <p><a href="{% url 'interest' child.id %}">{{ child.name }}</a></p><br>
+  {% endfor %}
+</div>
+{% endblock %}
