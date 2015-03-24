@@ -99,6 +99,6 @@ LOGIN_URL=reverse_lazy('login')
 LOGIN_REDIRECT_URL = reverse_lazy('home')
 LOGOUT_URL = reverse_lazy('logout')
 
-ENV_PATH = os.path.abspath(os.path.dirname(__file__))
+ENV_PATH = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 MEDIA_ROOT = os.path.join(ENV_PATH, 'media/')
-MEDIA_URL = "media/"
+MEDIA_URL = "http://127.0.0.1:8000/media/"

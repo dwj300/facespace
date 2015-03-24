@@ -2,7 +2,7 @@
 {% block content %}
 <div class="index">
   <h1>Welcome, {{ facespaceuser.first_name }}, to your profile.</h1>
-  <img src="{{ user.profile_picture.url }}">
+  <img src="{{ user.profile_picture.image.url }}">
   <p class="lead">Some blah goes here.
   <h2>Friends</h2>
   {% for friend in facespaceuser.friends.all %}

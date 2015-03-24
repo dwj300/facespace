@@ -100,10 +100,6 @@ class Photo(Entity):
     caption = models.TextField()
     image = models.ImageField(upload_to="photos")
 
-    @property
-    def url(self):
-        return '%s%s' % (settings.MEDIA_URL, self.image.url)
-    
     def __unicode__(self):
         return self.caption[:10]
 
