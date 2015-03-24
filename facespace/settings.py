@@ -95,7 +95,7 @@ STATIC_URL = '/static/'
 
 AUTH_USER_MODEL = 'backend.FaceSpaceUser'
 
-LOGIN_URL=reverse_lazy('login')
+LOGIN_URL = reverse_lazy('login')
 LOGIN_REDIRECT_URL = reverse_lazy('index')
 LOGOUT_URL = reverse_lazy('logout')
 

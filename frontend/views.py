@@ -3,6 +3,7 @@ from stronghold.decorators import public
 from backend.models import FaceSpaceUser, Interest
 from django.db.models import Q
 
+
 @public
 def index(request):
     if request.user.is_authenticated():

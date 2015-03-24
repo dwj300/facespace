@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from django.conf import settings
+
 
 class Interest(models.Model):
     name = models.CharField(max_length=50)
@@ -120,7 +120,7 @@ class Romance(models.Model):
     to_partner = models.ForeignKey('FaceSpaceUser', related_name='to_partner')
     romance_type = models.CharField(max_length=10, choices=ROMANCE_TYPES, default=DATING)
     since = models.DateField()
-    until = models.DateField(null=True,blank=True)
+    until = models.DateField(null=True, blank=True)
 
     def __unicode__(self):
         return " ".join([str(self.from_partner), "<3", str(self.to_partner)])
