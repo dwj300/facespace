@@ -2,19 +2,23 @@ from django.shortcuts import render
 from stronghold.decorators import public
 from backend.models import FaceSpaceUser, Interest
 from django.db.models import Q
-# Create your views here.
-
 
 @public
 def index(request):
-    return render(request, 'index.html')
-
-
-def home(request):
-    return render(request, 'home.html')
+    if request.user.is_authenticated():
+        return render(request, 'home.html')
+    else:
+        return render(request, 'index.html')
 
 
 def profile(request, username):
+    if request.user.username == username:
+        # getting your own profile
+        pass
+    else:
+        # getting someone else's profile
+        pass
+
     params = {}
     try:
         user = FaceSpaceUser.objects.get(username=username)
