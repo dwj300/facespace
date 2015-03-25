@@ -1,7 +1,231 @@
-{% extends "base.html" %}
-{% block content %}
-<div class="index">
-  <h1>Welcome to the facespace.</h1>
-  <p class="lead">Use this document as a way to quickly start any new project.<br> All you get is this text and a mostly barebones HTML document.</p>
-</div>
-{% endblock %}
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en" id="facebook" class="no_js">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="referrer" content="default" id="meta_referrer">
+  <title id="pageTitle">Welcome to Facespace - Log In, Sign Up or Learn More</title>
+  <meta property="og:site_name" content="Facespace">
+  <meta property="og:locale" content="en_US">
+  <meta name="description" content="Facespace is a social utility that connects people with friends and others who work, study and live around them. People use facespace to keep up with...">
+  <meta name="robots" content="noodp,noydir">
+  <!-- todo: download css -->
+  <link rel="shortcut icon" href="{% static 'img/favicon.ico' %}">
+  <link type="text/css" rel="stylesheet" href="{% static 'css/index1.css' %}" >
+  <link type="text/css" rel="stylesheet" href="{% static 'css/index2.css' %}" >
+  <link type="text/css" rel="stylesheet" href="{% static 'css/index3.css' %}" >
+</head>
+
+<body class="fbIndex UIPage_LoggedOut _2gsg webkit safari mac x1 Locale_en_US" dir="ltr">
+  <div class="_li">
+    <div id="pagelet_bluebar" role="banner" data-click="bluebar" data-click-phase="0">
+      <div id="blueBarDOMInspector" class="_21mm">
+        <div id="blueBarNAXAnchor" class="_4f7n _xxp">
+          <div>
+            <div class="loggedout_menubar_container">
+              <div class="clearfix loggedout_menubar">
+                <div class="lfloat _ohe">
+                  <h1>
+                  <a href="{% url 'index' %}" title="Go to facespace Home">
+                  <i class="fb_logo img sp_Z_xw_7FDtNv sx_b6c073">
+                  <u>Facespace logo</u></i></a></h1></div>
+                <div class="menu_login_container rfloat _ohf">
+                  <form id="login_form" action="{% url 'django.contrib.auth.views.login' %}" method="post" >
+                    {% csrf_token %}
+                    <table cellspacing="0" role="presentation">
+                      <tbody>
+                        <tr>
+                          <td class="html7magic">
+                            <label for="email">Email</label>
+                          </td>
+                          <td class="html7magic">
+                            <label for="pass">Password</label>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <input type="text" class="inputtext" name="username" id="id_username" placeholder="Username" required autofocus tabindex="1" >
+                          </td>
+                          <td>
+                            <input type="password" class="inputtext" name="password" id="id_password" placeholder="Password" required tabindex="2" >
+                          </td>
+                          <td>
+                            <label class="uiButton uiButtonConfirm" id="loginbutton" for="u_0_n">
+                              <input value="Log In" tabindex="4" type="submit" id="u_0_n">
+                            </label>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td class="login_form_label_field">
+                            <div>
+                              <div class="uiInputLabel clearfix uiInputLabelLegacy">
+                                
+                              </div>
+                              <input type="hidden" name="default_persistent" value="0">
+                            </div>
+                          </td>
+                          <!-- todo: this -->
+                          <td class="login_form_label_field"><a href="https://www.facebook.com/recover/initiate">Forgot your password?</a></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="globalContainer" class="uiContextualLayerParent">
+      <div class="fb_content clearfix " id="content" role="main">
+        <div>
+          <div class="_50dz">
+            <style type="text/css">
+            .product_desc {
+              width: 440px;
+            }
+            </style>
+            <div style="background: #edf0f5">
+              <div class="pvl" style="width: 980px; margin: 0 auto">
+                <div class="_7d _6_ _76">
+                  <h2 class="inlineBlock _3ma _6n _6s _6v" style="padding: 42px 0 24px; font-size: 28px; line-height: 36px"> Connect with friends and the<br>world around you on Facespace. </h2>
+                  <div class="mtl pbm">
+                    <div class="_6a _6b mrl" style="text-align: center; width: 55px"><img class="img" src="{% static 'img/newsfeed.png' %}" alt="" style="vertical-align: middle"></div>
+                    <div class="_6a _6b product_desc"><span class="mtl _3ma _6p _6s _6v"> See photos and updates </span><span class="mlm _6q _6t _mf"> from friends in News Feed. </span></div>
+                  </div>
+                  <div class="mtl pbm">
+                    <div class="_6a _6b mrl" style="text-align: center; width: 55px">
+                      <img class="img" src="{% static 'img/share.png' %}" alt="" style="vertical-align: middle">
+                    </div>
+                    <div class="_6a _6b product_desc">
+                      <span class="mtl _3ma _6p _6s _6v"> Share what's new </span>
+                      <span class="mlm _6q _6t _mf"> in your life on your Timeline. </span>
+                    </div>
+                  </div>
+                  <div class="mtl pbm">
+                    <div class="_6a _6b mrl" style="text-align: center; width: 55px">
+                      <img class="img" src="{% static 'img/graph.png' %}" alt="" style="vertical-align: middle"></div>
+                    <div class="_6a _6b product_desc">
+                      <span class="mtl _3ma _6p _6s _6v"> Find more </span>
+                      <span class="mlm _6q _6t _mf"> of what you're looking for with Graph Search. </span>
+                    </div>
+                  </div>
+                <!-- The following line MUST be on the same line... go figure -->
+                </div><div class="_6_ _74">
+                  <h2 class="mbs _3ma _6n _6s _6v" style="font-size: 36px">Sign Up</h2>
+                  <div class="mbl _3m9 _6o _6s _mf">It’s free and always will be.</div>
+                  <div>
+                    <div>
+                      <div class="_58mf">
+                        <div id="reg_box" class="registration_redesign">
+                          <form method="post" id="reg" name="reg" action="{% url 'register' %}" >
+                            {% csrf_token %}
+                            <div id="reg_form_box" class="large_form">
+                              <div class="clearfix _58mh">
+                                <div class="mbm _3-90 lfloat _ohe">
+                                  <div class="_5dbb" id="u_0_0">
+                                    <input type="text" class="inputtext _58mg _5dba _2ph-" data-type="text" name="firstname" aria-required="1" placeholder="First name" id="u_0_1" aria-label="First name"><i class="_5dbc img sp_Z_xw_7FDtNv sx_33ab79"></i><i class="_5dbd img sp_Z_xw_7FDtNv sx_826745"></i></div>
+                                </div>
+                                <div class="mbm rfloat _ohf">
+                                  <div class="_5dbb" id="u_0_2">
+                                    <input type="text" class="inputtext _58mg _5dba _2ph-" data-type="text" name="lastname" aria-required="1" placeholder="Last name" id="u_0_3" aria-label="Last name"><i class="_5dbc img sp_Z_xw_7FDtNv sx_33ab79"></i><i class="_5dbd img sp_Z_xw_7FDtNv sx_826745"></i></div>
+                                </div>
+                              </div>
+                              <div class="mbm">
+                                <div class="_5dbb" id="u_0_4">
+                                  <input type="text" class="inputtext _58mg _5dba _2ph-" data-type="text" name="username" aria-required="1" placeholder="Username" id="u_0_4" aria-label="Username"><i class="_5dbc img sp_Z_xw_7FDtNv sx_33ab79"></i><i class="_5dbd img sp_Z_xw_7FDtNv sx_826745"></i></div>
+                              </div>
+                              <div class="mbm">
+                                <div class="_5dbb" id="u_0_4">
+                                  <input type="text" class="inputtext _58mg _5dba _2ph-" data-type="text" name="email" aria-required="1" placeholder="Email" id="u_0_5" aria-label="Email or mobile number"><i class="_5dbc img sp_Z_xw_7FDtNv sx_33ab79"></i><i class="_5dbd img sp_Z_xw_7FDtNv sx_826745"></i></div>
+                              </div>
+                              <div class="mbm" id="u_0_6">
+                                <div class="_5dbb" id="u_0_7">
+                                  <input type="text" class="inputtext _58mg _5dba _2ph-" data-type="text" name="email_conf" aria-required="1" placeholder="Re-enter email" id="u_0_8" aria-label="Re-enter email or mobile number"><i class="_5dbc img sp_Z_xw_7FDtNv sx_33ab79"></i><i class="_5dbd img sp_Z_xw_7FDtNv sx_826745"></i></div>
+                              </div>
+                              <div class="mbm">
+                                <div class="_5dbb" id="u_0_9">
+                                  <input type="password" class="inputtext _58mg _5dba _2ph-" data-type="text" name="password" aria-required="1" placeholder="New password" id="u_0_a" aria-label="New password"><i class="_5dbc img sp_Z_xw_7FDtNv sx_33ab79"></i><i class="_5dbd img sp_Z_xw_7FDtNv sx_826745"></i></div>
+                              </div>
+                              <div class="_58mq _5dbb" id="u_0_b">
+                                <div class="mtm mbs _58mr">Birthday</div>
+                                <div class="_5k_5">
+                                <span class="_5k_4" data-type="selectors" data-name="birthday_wrapper" id="u_0_c">
+                                <span>
+                                <select aria-label="Month" name="birthday_month" id="month" title="Month" class="_5dba">
+                                  <option value="0" selected="1">Month</option>
+                                  <option value="1">Jan</option>
+                                  <option value="2">Feb</option>
+                                  <option value="3">Mar</option>
+                                  <option value="4">Apr</option>
+                                  <option value="5">May</option>
+                                  <option value="6">Jun</option>
+                                  <option value="7">Jul</option>
+                                  <option value="8">Aug</option>
+                                  <option value="9">Sep</option>
+                                  <option value="10">Oct</option>
+                                  <option value="11">Nov</option>
+                                  <option value="12">Dec</option>
+                                </select>
+                                <!-- todo: use freaking template tags -->
+                                <select aria-label="Day" name="birthday_day" id="day" title="Day" class="_5dba">
+                                  <option value="0" selected="1">Day</option>
+                                  {% for day in day_list %}
+                                  <option value="{{ day }}">{{ day }}</option>
+                                  {% endfor %}
+                                </select>
+                                <select aria-label="Year" name="birthday_year" id="year" title="Year" class="_5dba">
+                                <option value="0" selected="1">Year</option>
+                                {% for year in year_list %}
+                                <option value="{{ year }}">{{ year }}</option>
+                                {% endfor %}
+                                </select></span></span><a class="mlm _58ms" href="#" ajaxify="/help/ajax/reg_birthday" title="Click for more information" rel="async" role="button">Why do I need to provide my birthday?</a><i class="_5dbc _5k_6 img sp_Z_xw_7FDtNv sx_33ab79"></i><i class="_5dbd _5k_7 img sp_Z_xw_7FDtNv sx_826745"></i></div>
+                              </div>
+                              <div class="mtm _5wa2 _5dbb" id="u_0_f"><span class="_5k_3" data-type="radio" data-name="gender_wrapper" id="u_0_g"><span class="_5k_2 _5dba"><input type="radio" name="sex" value="1" id="u_0_d"><label class="_58mt" for="u_0_d">Female</label></span><span class="_5k_2 _5dba"><input type="radio" name="sex" value="2" id="u_0_e"><label class="_58mt" for="u_0_e">Male</label></span></span><i class="_5dbc _5k_6 img sp_Z_xw_7FDtNv sx_33ab79"></i><i class="_5dbd _5k_7 img sp_Z_xw_7FDtNv sx_826745"></i></div>
+                              <div class="_58mu" id="u_0_h">
+                                <p class="_58mv">By clicking Sign Up, you agree to our <a href="/legal/terms" target="_blank" rel="nofollow">Terms</a> and that you have read our <a href="/about/privacy" target="_blank" rel="nofollow">Data Policy</a>, including our <a href="/help/cookies" target="_blank" rel="nofollow">Cookie Use</a>.</p>
+                              </div>
+                              <div class="clearfix">
+                                <button type="submit" class="_6j mvm _6wk _6wl _58mi _3ma _6o _6v" name="websubmit" id="u_0_i">Sign Up</button><span class="hidden_elem _58ml" id="u_0_l"><img class="img" src="{% static 'img/loading.gif' %}" alt="" width="16" height="11"></span></div>
+                            </div>
+                            
+                          </form>
+                          <div id="reg_error" class="_58mn hidden_elem" role="alert">
+                            <div class="_58mo" id="reg_error_inner" tabindex="0">An error occurred. Please try again.</div>
+                          </div>
+                          <!-- todo: make into interests -->
+                          <div id="reg_pages_msg" class="_58mk"><a href="/pages/create/?ref_type=registration_form">Create a Page</a> for a celebrity, band or business.</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="pageFooter" data-referrer="page_footer">
+        <div id="contentCurve"></div>
+        <div role="contentinfo" aria-label="Facebook site links">
+          <table class="uiGrid _51mz navigationGrid" cellspacing="0" cellpadding="0">
+            <tbody>
+              <tr class="_51mx">
+                <td class="_51m- hLeft plm"><a href="/r.php" title="Sign Up for Facespace">Sign Up</a></td>
+                <td class="_51m- hLeft plm"><a href="/login/" title="Log into Facespace">Log In</a></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="mvl copyright">
+          <div>
+            <span> Facespace © 2015</span> 
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

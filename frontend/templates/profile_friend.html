@@ -10,13 +10,8 @@
     <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
 {% endthumbnail %}
   <p class="lead">Some blah goes here.
-  <h2>Pending Friends</h2>
-  {% for friendship in user.pending_friendships %}
-  <p>{{ friendship.from_friend.get_full_name }}<a href="{% url 'confirm' friendship.id %}">Confirm</a></p><br>
-  {% endfor %}
-
   <h2>Friends</h2>
-  {% for friend in confirmed_friends %}
+  {% for friend in facespaceuser.friends.all %}
   <p>{{ friend.first_name }}</p><br>
   {% endfor %}
   <h2>Upload photo</h2>

@@ -25,6 +25,10 @@ class FaceSpaceUser(AbstractUser):
 
     REQUIRED_FIELDS = ['email', 'first_name', 'last_name', 'birthday', 'is_male']
 
+    @property
+    def pending_friendships(self):
+        return Friendship.objects.filter(to_friend=self, confirmed=False)
+
     def __unicode__(self):
         return self.first_name + " " + self.last_name
 
@@ -73,8 +77,9 @@ class Comment(models.Model):
 class Friendship(models.Model):
     from_friend = models.ForeignKey('FaceSpaceUser', related_name='from_friend')
     to_friend = models.ForeignKey('FaceSpaceUser', related_name='to_friend')
-    since = models.DateField()
-
+    since = models.DateField(auto_now_add=True)
+    confirmed = models.BooleanField(default=False)
+    
     def __unicode__(self):
         return " ".join([str(self.from_friend), "<->", str(self.to_friend)])
 

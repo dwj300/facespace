@@ -23,7 +23,7 @@ SECRET_KEY = '^f-3^etck2%uf^kqhr)@bgj_pp+ekm2+(cz+ay&av41y22&fu@'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
+THUMBNAIL_DEBUG = True
 TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = []
@@ -39,6 +39,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'debug_toolbar',
+    'sorl.thumbnail',
     'stronghold',
     'backend',
     'frontend',
@@ -67,7 +68,7 @@ WSGI_APPLICATION = 'facespace.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'newTest',
+        'NAME': 'facespace',
         'USER': 'root',
         'PASSWORD': '',
         'HOST': 'localhost',

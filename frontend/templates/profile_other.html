@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load thumbnail %}
+
+{% block content %}
+<div class="index">
+  <h1>Here is {{ facespaceuser.first_name }}'s, profile.</h1>
+
+    <img src="{{ facespaceuser.profile_picture.image.url }}">
+  {% thumbnail user.profile_picture.image "100x100" crop="center" as im %}
+    <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
+{% endthumbnail %}
+  <p class="lead">
+  {% if friendship %}
+  <h1>friendship pending</h1>
+  {% else %}
+  <a href="{% url 'friend' facespaceuser.id %}">Friend {{ facespaceuser.get_full_name }}</a>
+  {% endif %}
+  <h2>Friends</h2>
+  {% for friend in facespaceuser.friends.all %}
+  <p>{{ friend.first_name }}</p><br>
+  {% endfor %}
+</div>
+{% endblock %}
