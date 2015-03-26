@@ -1,5 +1,5 @@
 from django.shortcuts import redirect  # , render
-from backend.models import FaceSpaceUser, Friendship
+from backend.models import FaceSpaceUser, Friendship, Photo
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
