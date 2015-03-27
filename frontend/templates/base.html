@@ -23,15 +23,24 @@
           </button>
           <a class="navbar-brand" href="#">facespace</a>
         </div>
-        <div id="navbar" class="collapse navbar-collapse">
-          <ul class="nav navbar-nav">
-            <li class="active"><a href="{% url 'index' %}">Home</a></li>
+        <div class="navbar-collapse collapse">
+        <form action="{% url 'search' %}" method="get" class="navbar-form pull-right">
+          <div class="input-append">
+            <input class="span4" id="appendedInputButton" name="query" type="text" placeholder="Search...">
+            <button class="btn" type="button">Search</button>
+          </div>
+        </form>
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="{% url 'index' %}">Home</a></li>
             {% if user.is_authenticated %}
-            <li><a href="{% url 'logout' %}">Logout</a></li>
+                <li><a href="{% url 'interest' 1 %}">Interests</a></li>
+                <li><a href="{% url 'logout' %}">Logout</a></li>
+                <li><a href="{ url 'add_interest' }">Add Interest</a></li>
             {% else %}
-            <li><a href="{% url 'login' %}">Login</a></li>
+                <li><a href="{% url 'register' %}">Register Here</a></li>
+                <li><a href="{% url 'login' %}">Login</a></li>
             {% endif %}
-            <li class="active"><a href="{% url 'interest' 1 %}">Interests</a></li>
+                <li><a href="{ url 'about' }">About</a></li>
           </ul>
         </div>
       </div>

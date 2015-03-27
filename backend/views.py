@@ -3,10 +3,9 @@ from backend.models import FaceSpaceUser, Friendship, Photo
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
-
 from stronghold.decorators import public
-
 from datetime import date
+from forms import FaceSpaceRegistrationForm
 
 
 def upload(request):
@@ -35,10 +34,10 @@ def confirm(request, friendship_id):
 
 @public
 def register(request):
+    # todo: add form validation
     birthday = date(year=int(request.POST['birthday_year']),
                     month=int(request.POST['birthday_month']),
                     day=int(request.POST['birthday_day']))
-
     user = FaceSpaceUser.objects.create_user(username=request.POST['username'],
                                              password=request.POST['password'],
                                              email=request.POST['email'],
@@ -46,6 +45,7 @@ def register(request):
                                              is_male=bool(int(request.POST['sex'])),
                                              first_name=request.POST['firstname'],
                                              last_name=request.POST['lastname'])
+
     auth_user = authenticate(username=request.POST['username'], password=request.POST['password'])
     login(request, auth_user)
     return redirect('index')

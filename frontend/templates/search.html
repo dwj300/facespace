@@ -2,8 +2,8 @@
 {% block content %}
 <div class="index">
 <h1>Search Results</h1>
-{% for result in results %}
-{{ result.get_full_name }}
+{% for user in results %}
+<a href="{% url 'profile' user.username %}">{{ user.get_full_name }}</a><br>
 {% endfor %}
 </div>
 {% endblock %}

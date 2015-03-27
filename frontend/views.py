@@ -2,6 +2,7 @@ from django.shortcuts import render
 from stronghold.decorators import public
 from backend.models import FaceSpaceUser, Friendship, Interest
 from django.db.models import Q
+from django.core.exceptions import ObjectDoesNotExist
 
 
 @public
@@ -17,7 +18,8 @@ def profile(request, username):
     try:
         other_user = FaceSpaceUser.objects.get(username=username)
         params['facespaceuser'] = other_user
-    except:
+    except ObjectDoesNotExist:
+        # user doesnt exist
         # redirect to homepage
         pass
 

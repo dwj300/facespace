@@ -10,7 +10,6 @@
   <meta property="og:locale" content="en_US">
   <meta name="description" content="Facespace is a social utility that connects people with friends and others who work, study and live around them. People use facespace to keep up with...">
   <meta name="robots" content="noodp,noydir">
-  <!-- todo: download css -->
   <link rel="shortcut icon" href="{% static 'img/favicon.ico' %}">
   <link type="text/css" rel="stylesheet" href="{% static 'css/index1.css' %}" >
   <link type="text/css" rel="stylesheet" href="{% static 'css/index2.css' %}" >
@@ -169,7 +168,6 @@
                                   <option value="11">Nov</option>
                                   <option value="12">Dec</option>
                                 </select>
-                                <!-- todo: use freaking template tags -->
                                 <select aria-label="Day" name="birthday_day" id="day" title="Day" class="_5dba">
                                   <option value="0" selected="1">Day</option>
                                   {% for day in day_list %}
