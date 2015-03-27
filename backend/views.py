@@ -5,7 +5,6 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
 from stronghold.decorators import public
 from datetime import date
-from forms import FaceSpaceRegistrationForm
 
 
 def upload(request):
