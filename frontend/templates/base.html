@@ -24,18 +24,19 @@
           <a class="navbar-brand" href="{% url 'index' %}">facespace</a>
         </div>
         <div class="navbar-collapse collapse">
-        <form action="{% url 'search' %}" method="get" class="navbar-form pull-right">
-          <div class="input-append">
-            <input class="span4" id="appendedInputButton" name="query" type="text" placeholder="Search...">
-            <button class="btn" type="button">Search</button>
-          </div>
-        </form>
+          <form action="{% url 'search' %}" method="get" class="navbar-form pull-right">
+            <div class="input-append">
+              <input class="span4" id="appendedInputButton" name="query" type="text" placeholder="Search...">
+              <button class="btn" type="button">Search</button>
+            </div>
+          </form>
           <ul class="nav navbar-nav navbar-right">
+            <li><a href="{% url 'profile' user.username %}">{{ user.get_full_name }}</a></li>
             <li><a href="{ url 'add_ad' }">Create Ad</a></li>
-                <li><a href="{% url 'interest' 1 %}">Interests</a></li>
-                <li><a href="{% url 'logout' %}">Logout</a></li>
-                <li><a href="{ url 'add_interest' }">Add Interest</a></li>
-                <li><a href="{ url 'about' }">About</a></li>
+            <li><a href="{% url 'interest' 1 %}">Interests</a></li>
+            <li><a href="{ url 'add_interest' }">Add Interest</a></li>
+            <li><a href="{ url 'about' }">About</a></li>
+            <li><a href="{% url 'logout' %}">Logout</a></li>
           </ul>
         </div>
       </div>
