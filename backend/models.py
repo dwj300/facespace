@@ -50,6 +50,7 @@ class Entity(models.Model):
 
 
 class Ad(models.Model):
+    name = models.CharField(max_length=20, null=True, blank=True)
     content_photo = models.ImageField(upload_to="ads")
     owner = models.ForeignKey('FaceSpaceUser', null=False)
    
