@@ -1,5 +1,5 @@
 from django.shortcuts import redirect  # , render
-from backend.models import FaceSpaceUser, Friendship, Photo
+from backend.models import FaceSpaceUser, Friendship, Photo, Ad
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
@@ -17,19 +17,27 @@ def upload(request):
     return redirect('profile', request.user.username)
 
 
+def upload_ad_pic(request):
+    ad = Ad(content_photo=request.FILES['photo'], owner=request.user)
+    ad.save()
+    return redirect('profile',request.user.username)
+
+
 def friend(request, other_friend_id):
     other_friend = FaceSpaceUser.objects.get(id=other_friend_id)
     Friendship.objects.create(to_friend=other_friend, from_friend=request.user)
     messages.success(request, "Sent friend request to {0}.".format(other_friend.get_full_name()))
-    return redirect('profile', other_friend.username)   
+    return redirect('profile', other_friend.username)
 
 
 def confirm(request, friendship_id):
     friendship = Friendship.objects.get(id=friendship_id)
     friendship.confirmed = True
     friendship.save()
-    messages.success(request, "Confirmed friendship with {0}".format(friendship.from_friend.get_full_name()))
+    messages.success(request, "Confirmed friendship with {0}".format(
+        friendship.from_friend.get_full_name()))
     return redirect('profile', request.user.username)
+
 
 @public
 def register(request):

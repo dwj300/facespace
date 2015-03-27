@@ -5,6 +5,10 @@ from django.contrib.auth.models import AbstractUser
 class Interest(models.Model):
     name = models.CharField(max_length=50)
     parent = models.ForeignKey('self', related_name="children", null=True, blank=True)
+    bid_time = models.DateTimeField(null=True,blank=True)
+    bid_price = models.DecimalField(max_digits=9, decimal_places=2,null=True,blank=True)
+    holds = models.ForeignKey('Ad', related_name='holding_ad_slots', null=True, blank=True)
+    will_hold = models.ForeignKey('Ad', related_name='will_hold_ad_slots', null=True, blank=True)
 
     def __unicode__(self):
         return self.name
@@ -46,22 +50,14 @@ class Entity(models.Model):
 
 
 class Ad(models.Model):
-    content_link = models.URLField()
+    content_photo = models.ImageField(upload_to="ads")
     owner = models.ForeignKey('FaceSpaceUser', null=False)
+   
+    def __unicode__(self):
+        return str(self.id)
 
     class Meta:
         db_table = 'ads'
-
-
-class AdSlot(models.Model):
-    bid_time = models.DateTimeField()
-    bid_price = models.DecimalField(max_digits=9, decimal_places=2)
-    interest = models.OneToOneField('Interest')
-    holds = models.ForeignKey('Ad', related_name='holding_ad_slots')
-    will_hold = models.ForeignKey('Ad', related_name='will_hold_ad_slots', null=True)
-
-    class Meta:
-        db_table = 'adslots'
 
 
 class Comment(models.Model):
