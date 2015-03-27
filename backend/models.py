@@ -81,7 +81,10 @@ class Friendship(models.Model):
     confirmed = models.BooleanField(default=False)
     
     def __unicode__(self):
-        return " ".join([str(self.from_friend), "<->", str(self.to_friend)])
+        if self.confirmed:
+            return " ".join([str(self.from_friend), "<->", str(self.to_friend)])
+        else:
+            return "{0} -> {1}".format(str(self.from_friend), str(self.to_friend))
 
     class Meta:
         unique_together = ('from_friend', 'to_friend')
@@ -98,7 +101,7 @@ class Like(models.Model):
         db_table = 'likes'
 
     def __unicode__(self):
-        return str(self.user) + " likes " + str(self.entity)
+        return "{0} likes {1}".format(str(self.user), str(self.entity))
 
 
 class Photo(Entity):

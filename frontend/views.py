@@ -1,8 +1,10 @@
 from django.shortcuts import render
 from stronghold.decorators import public
 from backend.models import FaceSpaceUser, Friendship, Interest
+from backend.forms import PhotoForm
 from django.db.models import Q
 from django.core.exceptions import ObjectDoesNotExist
+
 
 
 @public
@@ -14,7 +16,7 @@ def index(request):
 
 
 def profile(request, username):
-    params = {}
+    params = {'form': PhotoForm()}
     try:
         other_user = FaceSpaceUser.objects.get(username=username)
         params['facespaceuser'] = other_user

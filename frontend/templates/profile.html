@@ -5,10 +5,9 @@
 <div class="index">
   <h1>Welcome, {{ facespaceuser.first_name }}, to your profile.</h1>
 
-    <img src="{{ user.profile_picture.image.url }}">
   {% thumbnail user.profile_picture.image "100x100" crop="center" as im %}
     <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
-{% endthumbnail %}
+  {% endthumbnail %}
   <p class="lead">Some blah goes here.
   <h2>Pending Friends</h2>
   {% for friendship in user.pending_friendships %}
@@ -21,9 +20,9 @@
   {% endfor %}
   <h2>Upload photo</h2>
   <form method="post" action="{% url 'upload' %}" enctype="multipart/form-data">
-  {% csrf_token %}
-  <input type="file" name="photo">
-  <input type="submit" value="Upload">
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit" value="Upload">
   </form>
 </div>
 {% endblock %}
