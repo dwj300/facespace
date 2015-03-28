@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.db.models import Q
 
 
 class Interest(models.Model):
@@ -32,6 +33,18 @@ class FaceSpaceUser(AbstractUser):
     @property
     def pending_friendships(self):
         return Friendship.objects.filter(to_friend=self, confirmed=False)
+
+    @property
+    def confirmed_friends(self):
+        confirmed_friendships = Friendship.objects.filter(Q(to_friend=self)|Q(from_friend=self), confirmed=True)
+        friends = []
+        for friendship in confirmed_friendships:
+            if friendship.to_friend == self:
+                friends.append(friendship.from_friend)
+            else:
+                friends.append(friendship.to_friend)
+        return friends
+
 
     def __unicode__(self):
         return self.first_name + " " + self.last_name

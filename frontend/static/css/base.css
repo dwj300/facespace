@@ -1,0 +1,29 @@
+.inline-headers img, .inline-headers h4 {
+  display: inline-block;
+  vertical-align: baseline;
+}
+
+body {
+	background: #f7f7f7;
+}
+
+.navbar-inverse {
+	background-color: #3b5998;
+}
+
+.search_box {
+	font-family: 'helvetica neue', helvetica, arial, 'lucida grande', sans-serif;
+	-webkit-font-smoothing: antialiased;
+  	line-height: 19px;
+  	padding: 3px 0 0;
+  	text-shadow: none;
+  	font-size: 14px;
+}
+
+.color_me {
+	color: white;
+}
+
+.mini_prof_pic {
+	margin-top: 10px;
+}

@@ -3,22 +3,16 @@
 
 {% block content %}
 <div class="index">
-  <h1>Welcome, {{ facespaceuser.first_name }}, to your profile.</h1>
+  <h1>Welcome to {{ facespaceuser.first_name }}'s profile.</h1>
 
-    <img src="{{ user.profile_picture.image.url }}">
   {% thumbnail user.profile_picture.image "100x100" crop="center" as im %}
     <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
 {% endthumbnail %}
   <p class="lead">Some blah goes here.
   <h2>Friends</h2>
-  {% for friend in facespaceuser.friends.all %}
-  <p>{{ friend.first_name }}</p><br>
+  {% for friend in facespaceuser.confirmed_friends %}
+  <p><a href="{% url 'profile' friend.username %}">{{ friend.get_full_name }}</a></p><br>
   {% endfor %}
-  <h2>Upload photo</h2>
-  <form method="post" action="{% url 'upload' %}" enctype="multipart/form-data">
-  {% csrf_token %}
-  <input type="file" name="photo">
-  <input type="submit" value="Upload">
-  </form>
+
 </div>
 {% endblock %}
