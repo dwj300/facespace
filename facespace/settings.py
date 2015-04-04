@@ -103,3 +103,5 @@ LOGOUT_URL = reverse_lazy('logout')
 ENV_PATH = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 MEDIA_ROOT = os.path.join(ENV_PATH, 'media/')
 MEDIA_URL = "http://127.0.0.1:8000/media/"
+
+STRONGHOLD_PUBLIC_URLS = ('/media/', '/static/')

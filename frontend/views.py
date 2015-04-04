@@ -1,8 +1,10 @@
 from django.shortcuts import render
 from stronghold.decorators import public
 from backend.models import FaceSpaceUser, Friendship, Interest
+from backend.forms import PhotoForm
 from django.db.models import Q
 from django.core.exceptions import ObjectDoesNotExist
+
 
 
 @public
@@ -14,7 +16,7 @@ def index(request):
 
 
 def profile(request, username):
-    params = {}
+    params = {'form': PhotoForm()}
     try:
         other_user = FaceSpaceUser.objects.get(username=username)
         params['facespaceuser'] = other_user
@@ -25,10 +27,8 @@ def profile(request, username):
 
     if other_user == request.user:
         # getting your own profile
-        pending_friends = Friendship.objects.filter(to_friend=request.user, confirmed=False).values('from_friend__first_name', 'id')
-        confirmed_friends = Friendship.objects.filter(Q(to_friend=request.user)|Q(from_friend=request.user), confirmed=True)
-        params['pending_friends'] = list(pending_friends)
-        params['confirmed_friends'] = list(confirmed_friends)
+        #confirmed_friends = Friendship.objects.filter(Q(to_friend=request.user)|Q(from_friend=request.user), confirmed=True)
+        #params['confirmed_friends'] = list(confirmed_friends)
         return render(request, 'profile.html', params)
     elif Friendship.objects.filter((Q(to_friend=request.user)   & Q(from_friend=other_user)) | \
                                    (Q(from_friend=request.user) & Q(to_friend=other_user)),

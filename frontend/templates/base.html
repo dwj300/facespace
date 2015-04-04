@@ -1,4 +1,5 @@
 {% load staticfiles %}
+{% load thumbnail %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -10,6 +11,7 @@
     <title>the facespace</title>
     <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
     <link href="{% static 'css/index.css' %}" rel="stylesheet">
+    <link href="{% static 'css/base.css' %}" rel="stylesheet">
   </head>
   <body>
     <nav class="navbar navbar-inverse navbar-fixed-top">
@@ -21,26 +23,25 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">facespace</a>
+          <a class="navbar-brand" href="{% url 'index' %}"><div class="color_me">facespace</div></a>
         </div>
         <div class="navbar-collapse collapse">
-        <form action="{% url 'search' %}" method="get" class="navbar-form pull-right">
-          <div class="input-append">
-            <input class="span4" id="appendedInputButton" name="query" type="text" placeholder="Search...">
-            <button class="btn" type="button">Search</button>
-          </div>
-        </form>
+          <form action="{% url 'search' %}" method="get" class="navbar-form pull-right">
+            <div class="input-append">
+              <input class="span4 search_box" id="appendedInputButton" name="query" type="text" placeholder="Search...">
+              <button class="btn" type="button">Search</button>
+            </div>
+          </form>
           <ul class="nav navbar-nav navbar-right">
-            <li><a href="{% url 'index' %}">Home</a></li>
-            {% if user.is_authenticated %}
-                <li><a href="{% url 'interest' 1 %}">Interests</a></li>
-                <li><a href="{% url 'logout' %}">Logout</a></li>
-                <li><a href="{ url 'add_interest' }">Add Interest</a></li>
-            {% else %}
-                <li><a href="{% url 'register' %}">Register Here</a></li>
-                <li><a href="{% url 'login' %}">Login</a></li>
-            {% endif %}
-                <li><a href="{ url 'about' }">About</a></li>
+            {% thumbnail user.profile_picture.image "30x30" crop="center" as im %}
+            <li><img class="mini_prof_pic" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}"></li>
+            {% endthumbnail %}
+            <li><a href="{% url 'profile' user.username %}"><div class="color_me">{{ user.first_name }}</div></a></li>
+            <li><a href="{ url 'add_ad' }"><div class="color_me">Create Ad</div></a></li>
+            <li><a href="{% url 'interest' 1 %}"><div class="color_me">Interests</div></a></li>
+            <li><a href="{ url 'add_interest' }"><div class="color_me">Add Interest</div></a></li>
+            <li><a href="{ url 'about' }"><div class="color_me">About</div></a></li>
+            <li><a href="{% url 'logout' %}"><div class="color_me">Logout</div></a></li>
           </ul>
         </div>
       </div>

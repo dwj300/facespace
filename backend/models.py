@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.db.models import Q
 
 
 class Interest(models.Model):
@@ -32,6 +33,18 @@ class FaceSpaceUser(AbstractUser):
     @property
     def pending_friendships(self):
         return Friendship.objects.filter(to_friend=self, confirmed=False)
+
+    @property
+    def confirmed_friends(self):
+        confirmed_friendships = Friendship.objects.filter(Q(to_friend=self)|Q(from_friend=self), confirmed=True)
+        friends = []
+        for friendship in confirmed_friendships:
+            if friendship.to_friend == self:
+                friends.append(friendship.from_friend)
+            else:
+                friends.append(friendship.to_friend)
+        return friends
+
 
     def __unicode__(self):
         return self.first_name + " " + self.last_name
@@ -78,7 +91,10 @@ class Friendship(models.Model):
     confirmed = models.BooleanField(default=False)
     
     def __unicode__(self):
-        return " ".join([str(self.from_friend), "<->", str(self.to_friend)])
+        if self.confirmed:
+            return " ".join([str(self.from_friend), "<->", str(self.to_friend)])
+        else:
+            return "{0} -> {1}".format(str(self.from_friend), str(self.to_friend))
 
     class Meta:
         unique_together = ('from_friend', 'to_friend')
@@ -95,7 +111,7 @@ class Like(models.Model):
         db_table = 'likes'
 
     def __unicode__(self):
-        return str(self.user) + " likes " + str(self.entity)
+        return "{0} likes {1}".format(str(self.user), str(self.entity))
 
 
 class Photo(Entity):
