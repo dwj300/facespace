@@ -37,9 +37,9 @@
             <li><img class="mini_prof_pic" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}"></li>
             {% endthumbnail %}
             <li><a href="{% url 'profile' user.username %}"><div class="color_me">{{ user.first_name }}</div></a></li>
-            <li><a href="{ url 'add_ad' }"><div class="color_me">Create Ad</div></a></li>
+            <li><a href="{% url 'create_ad' %}"><div class="color_me">Create Ad</div></a></li>
             <li><a href="{% url 'interest' 1 %}"><div class="color_me">Interests</div></a></li>
-            <li><a href="{ url 'add_interest' }"><div class="color_me">Add Interest</div></a></li>
+            <li><a href="{% url 'create_interest' %}"><div class="color_me">Create Interest</div></a></li>
             <li><a href="{ url 'about' }"><div class="color_me">About</div></a></li>
             <li><a href="{% url 'logout' %}"><div class="color_me">Logout</div></a></li>
           </ul>
