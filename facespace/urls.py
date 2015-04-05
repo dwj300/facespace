@@ -5,6 +5,7 @@ import settings
 
 urlpatterns = patterns('',
     url(r'^$', 'frontend.views.index', name='index'),
+    url(r'^about/$', 'frontend.views.about', name='about'),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^api/', include('api.urls', namespace='api', app_name='api')),
     url(r'^bid/(\d+)/$', 'frontend.views.bid', name='bid'),

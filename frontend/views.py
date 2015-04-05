@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from stronghold.decorators import public
-from backend.models import Ad, Comment, FaceSpaceUser, Romance, Status
-from backend.models import Friendship, Interest, Like, Photo
+from backend.models import Ad, FaceSpaceUser, Status
+from backend.models import Friendship, Interest
 from backend.forms import PhotoForm, InterestForm, AdForm, BidForm, StatusForm
 from django.db.models import Q
 from django.core.exceptions import ObjectDoesNotExist
@@ -15,6 +15,10 @@ def index(request):
         return render(request,
                       'index.html',
                       {'day_list': range(1, 32, 1), 'year_list': range(2015, 1900, -1)})
+
+
+def about(request):
+    return render(request, 'about.html')
 
 
 def newsfeed(request):
@@ -36,6 +40,7 @@ def newsfeed(request):
 
 
 def profile(request, username):
+    # todo: romance
     params = {}
     try:
         other_user = FaceSpaceUser.objects.get(username=username)
