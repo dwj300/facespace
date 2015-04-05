@@ -1,7 +1,33 @@
 {% extends "base.html" %}
+
 {% block content %}
-<div class="index">
-  <h1>Welcome, <a href="{% url 'profile' user.username %}">{{ user.first_name }}</a>, to the facespace newsfeed.</h1>
-  <p class="lead">Use this document as a way to quickly start any new project.<br> All you get is this text and a mostly barebones HTML document.</p>
+
+<style>
+
+
+
+</style>
+
+<div class="home row">
+  <div class="left-margin col-xs-2"></div>
+
+  <div class="sidebar col-xs-2">
+    <a href="{% url 'profile' user.username %}">{{ user.first_name }}</a>
+  </div>
+
+  <div class="feed col-xs-8">
+    {% for s in statuses %}
+    <div class="post">
+      <div class="header">
+        {{ s.user }}
+      </div>
+      <div>
+        <p class="body">{{ s.text }}</p>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="right-margin col-xs-2"></div>
 </div>
 {% endblock %}

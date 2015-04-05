@@ -3,19 +3,35 @@ from django.contrib.auth.models import AbstractUser
 from django.db.models import Q
 
 
-class Interest(models.Model):
-    name = models.CharField(max_length=50)
-    parent = models.ForeignKey('self', related_name="children", null=True, blank=True)
-    bid_time = models.DateTimeField(null=True,blank=True)
-    bid_price = models.DecimalField(max_digits=9, decimal_places=2,null=False,default=0.99)
-    holds = models.ForeignKey('Ad', related_name='holding_ad_slots', null=True, blank=True)
-    will_hold = models.ForeignKey('Ad', related_name='will_hold_ad_slots', null=True, blank=True)
-
+class Ad(models.Model):
+    name = models.CharField(max_length=20, null=True, blank=True)
+    content_photo = models.ImageField(upload_to="ads")
+    owner = models.ForeignKey('FaceSpaceUser', null=False)
+   
     def __unicode__(self):
-        return self.name
+        return str(self.id)
 
     class Meta:
-        db_table = 'interests'
+        db_table = 'ads'
+
+
+class Comment(models.Model):
+    user = models.ForeignKey('FaceSpaceUser', null=False)
+    entity = models.ForeignKey('Entity')
+    time_created = models.DateTimeField(auto_now_add=True)
+    text = models.TextField()
+
+    class Meta:
+        db_table = 'comments'
+
+
+class Entity(models.Model):
+    time_created = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey('FaceSpaceUser')
+
+    class Meta:
+        verbose_name_plural = 'Entities'
+        db_table = 'entities'
 
 
 class FaceSpaceUser(AbstractUser):
@@ -53,37 +69,6 @@ class FaceSpaceUser(AbstractUser):
         db_table = 'facespaceusers'
 
 
-class Entity(models.Model):
-    time_created = models.DateTimeField(auto_now_add=True)
-    user = models.ForeignKey('FaceSpaceUser')
-
-    class Meta:
-        verbose_name_plural = 'Entities'
-        db_table = 'entities'
-
-
-class Ad(models.Model):
-    name = models.CharField(max_length=20, null=True, blank=True)
-    content_photo = models.ImageField(upload_to="ads")
-    owner = models.ForeignKey('FaceSpaceUser', null=False)
-   
-    def __unicode__(self):
-        return str(self.id)
-
-    class Meta:
-        db_table = 'ads'
-
-
-class Comment(models.Model):
-    user = models.ForeignKey('FaceSpaceUser', null=False)
-    entity = models.ForeignKey('Entity')
-    time_created = models.DateTimeField(auto_now_add=True)
-    text = models.TextField()
-
-    class Meta:
-        db_table = 'comments'
-
-
 class Friendship(models.Model):
     from_friend = models.ForeignKey('FaceSpaceUser', related_name='from_friend')
     to_friend = models.ForeignKey('FaceSpaceUser', related_name='to_friend')
@@ -99,6 +84,21 @@ class Friendship(models.Model):
     class Meta:
         unique_together = ('from_friend', 'to_friend')
         db_table = 'friendships'
+
+
+class Interest(models.Model):
+    name = models.CharField(max_length=50)
+    parent = models.ForeignKey('self', related_name="children", null=True, blank=True)
+    bid_time = models.DateTimeField(null=True,blank=True)
+    bid_price = models.DecimalField(max_digits=9, decimal_places=2,null=False,default=0.99)
+    holds = models.ForeignKey('Ad', related_name='holding_ad_slots', null=True, blank=True)
+    will_hold = models.ForeignKey('Ad', related_name='will_hold_ad_slots', null=True, blank=True)
+
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        db_table = 'interests'
 
 
 class Like(models.Model):
@@ -156,3 +156,4 @@ class Status(Entity):
 
     class Meta:
         db_table = 'statuses'
+        verbose_name_plural = 'statuses'

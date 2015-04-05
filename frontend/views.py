@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from stronghold.decorators import public
-from backend.models import FaceSpaceUser, Friendship, Interest, Ad
+from backend.models import Ad, Comment, Entity, FaceSpaceUser, Friendship, Interest, Like, Photo, \
+                           Romance, Status
 from backend.forms import PhotoForm, InterestForm, AdForm, BidForm
 from django.db.models import Q
 from django.core.exceptions import ObjectDoesNotExist
@@ -9,9 +10,28 @@ from django.core.exceptions import ObjectDoesNotExist
 @public
 def index(request):
     if request.user.is_authenticated():
-        return render(request, 'home.html')
+        return newsfeed(request)
     else:
-        return render(request, 'index.html', {'day_list': range(1, 32, 1), 'year_list': range(2015, 1900, -1)})
+        return render(request, 
+                      'index.html', 
+                      {'day_list': range(1, 32, 1), 'year_list': range(2015, 1900, -1)})
+
+
+def newsfeed(request):
+    params = {}
+
+    # get stuff 
+    # todo: filter only friends' content
+    statuses = Status.objects.all()
+    likes = Like.objects.all()
+    comments = Comment.objects.all()
+    friendships = Friendship.objects.all()
+    photos = Photo.objects.all()
+    romance = Romance.objects.all()
+
+    params['statuses'] = statuses
+
+    return render(request, 'home.html', params)
 
 
 def profile(request, username):
