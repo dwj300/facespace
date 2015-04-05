@@ -12,6 +12,9 @@
   <div class="left-margin col-xs-2"></div>
 
   <div class="sidebar col-xs-2">
+    {% thumbnail user.profile_picture.image "30x30" crop="center" as im %}
+      <li><img class="mini_prof_pic" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}"></li>
+    {% endthumbnail %}
     <a href="{% url 'profile' user.username %}">{{ user.first_name }}</a>
   </div>
 

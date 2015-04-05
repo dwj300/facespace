@@ -30,6 +30,7 @@ def newsfeed(request):
     romance = Romance.objects.all()
 
     params['statuses'] = statuses
+    params['user'] = request.user
 
     return render(request, 'home.html', params)
 
