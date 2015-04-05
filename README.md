@@ -6,8 +6,11 @@ Welcome to facespace.
 
 ##To get started:
 
--1. Install redis:
+-2. Install redis:
    `$ brew install redis`
+
+-1. Start redi:
+   `$ redis-server /usr/local/etc/redis.conf`
 
 0. Install the imaging dependencies:
    `$ brew install libtiff libjpeg webp little-cms2`
