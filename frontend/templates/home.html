@@ -1,9 +1,13 @@
 {% extends "base.html" %}
 
 {% block content %}
-
+{% load thumbnail %}
 <style>
 
+.home {
+  margin-top:20px;
+  background-color: rgb(233, 234, 237);
+}
 
 
 </style>
@@ -12,17 +16,24 @@
   <div class="left-margin col-xs-2"></div>
 
   <div class="sidebar col-xs-2">
-    {% thumbnail user.profile_picture.image "30x30" crop="center" as im %}
-      <li><img class="mini_prof_pic" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}"></li>
-    {% endthumbnail %}
-    <a href="{% url 'profile' user.username %}">{{ user.first_name }}</a>
+    <a href="{% url 'profile' user.username %}">
+      {% thumbnail user.profile_picture.image "40x40" crop="center" as im %}
+        <img class="mini_prof_pic" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
+      {% endthumbnail %}
+    </a>
+    <a href="{% url 'profile' user.username %}">{{ user }}</a>
   </div>
 
   <div class="feed col-xs-8">
     {% for s in statuses %}
     <div class="post">
       <div class="header">
-        {{ s.user }}
+        <a href="{% url 'profile' user.username %}">
+          {% thumbnail s.user.profile_picture.image "40x40" crop="center" as im %}
+            <img class="mini_prof_pic" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
+          {% endthumbnail %}
+        </a>
+        <a href="{% url 'profile' user.username %}">{{ s.user }}</a>
       </div>
       <div>
         <p class="body">{{ s.text }}</p>
