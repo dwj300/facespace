@@ -143,7 +143,6 @@ def search(request):
     for term in terms:
         people = people.filter(Q(first_name__icontains=term) | Q(last_name__icontains=term))
 
-    #params = {'results': people}
     params['results'] = people
     params['keyword'] = query
 
