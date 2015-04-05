@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from stronghold.decorators import public
-from backend.models import Ad, Comment, FaceSpaceUser, Romance, Status
-from backend.models import Friendship, Interest, Like, Photo
+from backend.models import Ad, FaceSpaceUser, Status
+from backend.models import Friendship, Interest
 from backend.forms import PhotoForm, InterestForm, AdForm, BidForm, StatusForm
 from django.db.models import Q
 from django.core.exceptions import ObjectDoesNotExist
@@ -24,6 +24,10 @@ def index(request):
                       {'day_list': range(1, 32, 1), 'year_list': range(2015, 1900, -1)})
 
 
+def about(request):
+    return render(request, 'about.html')
+
+
 def newsfeed(request):
     params = {}
 
@@ -43,6 +47,7 @@ def newsfeed(request):
 
 
 def profile(request, username):
+    # todo: romance
     params = {}
     try:
         other_user = FaceSpaceUser.objects.get(username=username)
@@ -64,6 +69,7 @@ def profile(request, username):
                                    (Q(from_friend=request.user) & Q(to_friend=other_user)),
                                    confirmed=True).count() == 1:
         # getting a friend's profile
+        params['statuses'] = Status.objects.filter(user=other_user)
         return render(request, 'profile_friend.html', params)
     else:
         # getting someone else's profile
@@ -137,13 +143,15 @@ def interest(request, interest_id):
 
 
 def search(request):
+    params = {}
     query = request.GET['query']
     terms = query.split(' ')
     people = FaceSpaceUser.objects.all()
     for term in terms:
         people = people.filter(Q(first_name__icontains=term) | Q(last_name__icontains=term))
 
-    params = {'results': people}
+    params['results'] = people
+    params['keyword'] = query
 
     return render(request, 'search.html', params)
 
