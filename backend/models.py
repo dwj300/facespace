@@ -7,7 +7,7 @@ class Interest(models.Model):
     name = models.CharField(max_length=50)
     parent = models.ForeignKey('self', related_name="children", null=True, blank=True)
     bid_time = models.DateTimeField(null=True,blank=True)
-    bid_price = models.DecimalField(max_digits=9, decimal_places=2,null=True,blank=True)
+    bid_price = models.DecimalField(max_digits=9, decimal_places=2, null=True, blank=True)
     holds = models.ForeignKey('Ad', related_name='holding_ad_slots', null=True, blank=True)
     will_hold = models.ForeignKey('Ad', related_name='will_hold_ad_slots', null=True, blank=True)
 

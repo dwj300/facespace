@@ -25,5 +25,26 @@ body {
 }
 
 .mini_prof_pic {
-	margin-top: 10px;
+	margin-top: 5px;
+}
+
+.navbar-xs { 
+    min-height:40px;
+    height: 40px; 
+}
+
+.navbar-xs .navbar-brand {
+    padding: 0px 12px;
+    font-size: 16px;
+    line-height: 40px; 
+}
+
+.navbar-xs .navbar-nav > li > a {  
+    padding-top: 0px; 
+    padding-bottom: 0px; 
+    line-height: 40px; 
+}
+
+.search_button {
+    margin-top: 0px;
 }

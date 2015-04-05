@@ -1,8 +1,10 @@
-from django.forms import ModelForm
+from django.forms import ModelForm, CharField, TextInput
 from backend.models import Photo
 
 
 class PhotoForm(ModelForm):
-	class Meta:
-		model = Photo
-		exclude = ['user']
+    caption = CharField(widget=TextInput)
+
+    class Meta:
+        model = Photo
+        exclude = ['user']

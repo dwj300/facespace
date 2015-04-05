@@ -5,8 +5,7 @@
 <div class="index">
   <h1>Here is {{ facespaceuser.first_name }}'s, profile.</h1>
 
-    <img src="{{ facespaceuser.profile_picture.image.url }}">
-  {% thumbnail user.profile_picture.image "100x100" crop="center" as im %}
+  {% thumbnail facespaceuser.profile_picture.image "100x100" crop="center" as im %}
     <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
 {% endthumbnail %}
   <p class="lead">
@@ -16,8 +15,14 @@
   <a href="{% url 'friend' facespaceuser.id %}">Friend {{ facespaceuser.get_full_name }}</a>
   {% endif %}
   <h2>Friends</h2>
-  {% for friend in facespaceuser.friends.all %}
-  <p>{{ friend.first_name }}</p><br>
+  <div align="left">
+  {% for friend in facespaceuser.confirmed_friends %}
+    <a href="{% url 'profile' friend.username %}">
+    {% thumbnail friend.profile_picture.image "30x30" crop="center" as im %}
+    <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
+    {% endthumbnail %}
+    {{ friend.get_full_name }}</a><br>
   {% endfor %}
+</div>
 </div>
 {% endblock %}
