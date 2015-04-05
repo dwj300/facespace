@@ -1,6 +1,6 @@
 from django.shortcuts import redirect
-from backend.models import FaceSpaceUser, Friendship, Photo, Ad
-from backend.forms import PhotoForm
+from backend.models import FaceSpaceUser, Friendship, Photo, Ad, Status
+from backend.forms import PhotoForm, StatusForm
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
@@ -11,7 +11,7 @@ from datetime import date
 def upload(request):
     # todo: add validation
     form = PhotoForm(request.POST, request.FILES)
-    
+
     if form.is_valid():
         picture = form.save(commit=False)
         picture.user = request.user
@@ -21,10 +21,21 @@ def upload(request):
     return redirect('profile', request.user.username)
 
 
+def post_status(request):
+    form = StatusForm(request.POST)
+
+    if form.is_valid():
+        status = form.save(commit=False)
+        status.user = request.user
+        status.save()
+    return redirect('profile', request.user.username)
+
+
 def upload_ad_pic(request):
+    # @sam: use the form validator
     ad = Ad(content_photo=request.FILES['photo'], owner=request.user)
     ad.save()
-    return redirect('profile',request.user.username)
+    return redirect('profile', request.user.username)
 
 
 def friend(request, other_friend_id):

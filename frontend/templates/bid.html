@@ -3,7 +3,7 @@
 {% block content %}
 <div class="index">
     {{form.errors}}
-    <form method="post" action="{% url 'create_ad' %}" enctype="multipart/form-data">
+    <form method="post" action="{% url 'bid' interest.id %}" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form }}
         <input type="submit" value="Upload">

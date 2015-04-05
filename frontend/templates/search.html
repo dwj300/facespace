@@ -2,8 +2,14 @@
 {% block content %}
 <div class="index">
 <h1>Search Results</h1>
+<ol>
 {% for user in results %}
-<a href="{% url 'profile' user.username %}">{{ user.get_full_name }}</a><br>
-{% endfor %}
+<li>
+<div class="result_avatar"><a href="{% url 'profile' user.username %}"><img data-src="" imgwidth="100" imgheight="100" src=""></a></div>
+<div class="result_name"><a href="{% url 'profile' user.username %}">{{ user.get_full_name }}</a></div>
+<div class="request_button"><button>Add Friend</button></div>
+</li>
+{% endfor %}	
+</ol>
 </div>
 {% endblock %}

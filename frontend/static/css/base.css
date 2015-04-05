@@ -4,7 +4,7 @@
 }
 
 body {
-	background: #f7f7f7;
+	background: rgb(233, 234, 237);
 }
 
 .navbar-inverse {
@@ -24,8 +24,9 @@ body {
 	color: white;
 }
 
-.mini_prof_pic {
+.mini_prof {
 	margin-top: 5px;
+
 }
 
 .navbar-xs { 

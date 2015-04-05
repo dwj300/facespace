@@ -1,7 +1,113 @@
 {% extends "base.html" %}
+
 {% block content %}
-<div class="index">
-  <h1>Welcome, <a href="{% url 'profile' user.username %}">{{ user.first_name }}</a>, to the facespace newsfeed.</h1>
-  <p class="lead">Use this document as a way to quickly start any new project.<br> All you get is this text and a mostly barebones HTML document.</p>
+{% load thumbnail %}
+<style>
+
+body {
+  background: rgb(233, 234, 237);
+}
+
+.home {
+  margin-top:20px;
+}
+
+.prof_link {
+  font-size: 12px;
+  font-weight: bold;
+  color: black;
+}
+
+.post {
+  background: rgb(255, 255, 255);
+
+  margin-bottom: 10px;
+
+  padding: 10px;
+
+  -moz-border-radius: 3px;
+  border-radius:      3px;
+  border-bottom-color: rgb(208, 209, 213);
+  border-bottom-left-radius: 3px;
+  border-bottom-right-radius: 3px;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  border-image-outset: 0px;
+  border-image-repeat: stretch;
+  border-image-slice: 100%;
+  border-image-source: none;
+  border-image-width: 1;
+  border-left-color: rgb(223, 224, 228);
+  border-left-style: solid;
+  border-left-width: 1px;
+  border-right-color: rgb(223, 224, 228);
+  border-right-style: solid;
+  border-right-width: 1px;
+  border-top-color: rgb(229, 230, 233);
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+  border-top-style: solid;
+  border-top-width: 1px;
+}
+
+.mini_prof_pic {
+  margin-right:5px;
+  margin-top:5px;
+  vertical-align: top;
+}
+
+.post a {
+  color:rgb(59, 89, 152);
+  font-weight: bold;
+}
+
+.post .body {
+  margin:10px;
+  margin-left:0px;
+  margin-bottom:0px;
+}
+
+.post .body {
+  font-family: helvetica, arial, 'lucida grande', sans-serif;
+}
+
+
+</style>
+
+<div class="home row">
+  <div class="left-margin col-xs-2"></div>
+
+  <div class="sidebar col-xs-2">
+    <a href="{% url 'profile' user.username %}">
+      {% thumbnail user.profile_picture.image "40x40" crop="center" as im %}
+        <img class="mini_prof_pic" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
+      {% endthumbnail %}
+    </a>
+    <a class="prof_link" href="{% url 'profile' user.username %}">{{ user }}</a>
+  </div>
+
+  <div class="feed col-xs-8">
+    {% for s in statuses %}
+    <div class="post">
+      <div class="header">
+        <a href="{% url 'profile' user.username %}">
+          {% thumbnail s.user.profile_picture.image "40x40" crop="center" as im %}
+            <img class="mini_prof_pic" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
+          {% endthumbnail %}
+        </a>
+        <a href="{% url 'profile' user.username %}">{{ s.user }}</a>
+      </div>
+      <div class="body">
+        <div class="text">{{ s.text }}</div>
+      </div>
+      <div>
+        <div class="likes"></div>
+        <div class="comments"></div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="right-margin col-xs-2"></div>
 </div>
 {% endblock %}
