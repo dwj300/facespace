@@ -57,6 +57,9 @@ def profile(request, username):
                                    (Q(from_friend=request.user) & Q(to_friend=other_user)),
                                    confirmed=True).count() == 1:
         # getting a friend's profile
+
+        params['statuses'] = Status.objects.filter(user=other_user)
+
         return render(request, 'profile_friend.html', params)
     else:
         # getting someone else's profile
