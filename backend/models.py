@@ -77,7 +77,7 @@ class FaceSpaceUser(AbstractUser):
         return friends
 
     def __unicode__(self):
-        return self.first_name + " " + self.last_name
+        return self.get_full_name()
 
     class Meta:
         db_table = 'facespaceusers'

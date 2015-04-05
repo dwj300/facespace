@@ -1,23 +1,57 @@
 {% extends "base.html" %}
 {% load thumbnail %}
+{% load static %}
+
+{% block css %}
+<link href="{% static 'css/profile.css' %}" rel="stylesheet">
+{% endblock %}
 
 {% block content %}
-<div class="index">
-  <h1>Welcome to {{ facespaceuser.first_name }}'s profile.</h1>
+<div class="row">
+  <div class="col-sm-8 col-sm-offset-2">
+    <div class="row">
+      <div class="col-sm-3">
+        <h4>Friends</h4>
+        {% for friend in facespaceuser.confirmed_friends %}
+        <a href="{% url 'profile' friend.username %}">
+        {% thumbnail friend.profile_picture.image "30x30" crop="center" as im %}
+        <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
+        {% endthumbnail %}
+        {{ friend.get_full_name }}</a><br>
+        {% endfor %}
+      </div>
+      <div class="col-sm-9">
+        <h1>Profile</h1>
+        <div class="well inline-headers">
+          {% thumbnail facespaceuser.profile_picture.image "100x100" crop="center" as im %}
+          <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" class="img-thumbnail">
+          {% endthumbnail %}
+          <h4>{{ facespaceuser.get_full_name }}</h4>
+        </div>
 
-  {% thumbnail facespaceuser.profile_picture.image "100x100" crop="center" as im %}
-    <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
-{% endthumbnail %}
-  <p class="lead">Some blah goes here.
-  <h2>Friends</h2>
-  <div align="left">
-  {% for friend in facespaceuser.confirmed_friends %}
-    <a href="{% url 'profile' friend.username %}">
-    {% thumbnail friend.profile_picture.image "30x30" crop="center" as im %}
-    <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
-    {% endthumbnail %}
-    {{ friend.get_full_name }}</a><br>
-  {% endfor %}
-</div>
+        <div class="feed">
+        {% for s in statuses %}
+          <div class="post">
+            <div class="header">
+              <a href="{% url 'profile' s.user.username %}">
+                {% thumbnail s.user.profile_picture.image "40x40" crop="center" as im %}
+                  <img class="mini_prof_pic" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
+                {% endthumbnail %}
+              </a>
+              <a href="{% url 'profile' user.username %}">{{ s.user }}</a>
+            </div>
+            <div class="body">
+              <div class="text">{{ s.text }}</div>
+            </div>
+            <div>
+              <div class="likes"></div>
+              <div class="comments"></div>
+            </div>
+          </div>
+        {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 {% endblock %}
