@@ -7,6 +7,13 @@ from django.db.models import Q
 from django.core.exceptions import ObjectDoesNotExist
 
 
+from django.views.generic.base import TemplateView
+from django.views.decorators.csrf import csrf_exempt
+from ws4redis.publisher import RedisPublisher
+from ws4redis.redis_store import RedisMessage
+from django.http import HttpResponse
+
+
 @public
 def index(request):
     if request.user.is_authenticated():
@@ -139,3 +146,22 @@ def search(request):
     params = {'results': people}
 
     return render(request, 'search.html', params)
+
+
+class UserChatView(TemplateView):
+    template_name = 'user_chat.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(UserChatView, self).get_context_data(**kwargs)
+        context.update(users=FaceSpaceUser.objects.all())
+        return context
+
+    @csrf_exempt
+    def dispatch(self, *args, **kwargs):
+        return super(UserChatView, self).dispatch(*args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        redis_publisher = RedisPublisher(facility='foobar', users=[request.POST.get('user')])
+        message = RedisMessage(request.POST.get('message'))
+        redis_publisher.publish_message(message)
+        return HttpResponse('OK')

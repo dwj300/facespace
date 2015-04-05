@@ -1,6 +1,7 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
 from django.views.static import serve
+from frontend.views import UserChatView
 import settings
 
 urlpatterns = patterns('',
@@ -22,4 +23,5 @@ urlpatterns = patterns('',
     url(r'^confirm/([0-9]+)/$', 'backend.views.confirm', name="confirm"),
     url(r'^register/$', 'backend.views.register', name="register"),
     url(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
+    url(r'^userchat/$', UserChatView.as_view(), name='user_chat'),
 )

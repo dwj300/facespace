@@ -2,7 +2,13 @@ Django==1.7.5
 MySQL-python==1.2.5
 Pillow==2.7.0
 django-debug-toolbar==1.2.2
+django-redis-sessions==0.4.0
 django-stronghold==0.2.7
+django-websocket-redis==0.4.3
+gevent==1.0.1
+greenlet==0.4.5
+redis==2.10.3
+six==1.9.0
 sorl-thumbnail==12.2
 sqlparse==0.1.14
 wsgiref==0.1.2

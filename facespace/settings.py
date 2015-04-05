@@ -39,6 +39,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'debug_toolbar',
+    'ws4redis',
     'sorl.thumbnail',
     'stronghold',
     'backend',
@@ -56,6 +57,19 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'stronghold.middleware.LoginRequiredMiddleware',
 )
+
+TEMPLATE_CONTEXT_PROCESSORS = (
+    'django.contrib.auth.context_processors.auth',
+    'django.core.context_processors.request',
+    'django.core.context_processors.static',
+    'django.core.context_processors.debug',
+    'django.core.context_processors.i18n',
+    'django.core.context_processors.media',
+    'django.core.context_processors.static',
+    'django.core.context_processors.tz',
+    'django.contrib.messages.context_processors.messages',
+    'ws4redis.context_processors.default')
+
 
 ROOT_URLCONF = 'facespace.urls'
 
@@ -105,3 +119,18 @@ MEDIA_ROOT = os.path.join(ENV_PATH, 'media/')
 MEDIA_URL = "http://127.0.0.1:8000/media/"
 
 STRONGHOLD_PUBLIC_URLS = ('/media/', '/static/')
+
+# Chat stuff
+
+WEBSOCKET_URL = '/ws/'
+WSGI_APPLICATION = 'ws4redis.django_runserver.application'
+WS4REDIS_PREFIX = 'ws'
+
+# Redis sessions:
+SESSION_ENGINE = 'redis_sessions.session'
+SESSION_REDIS_PREFIX = 'session'
+
+# List of callables that know how to import templates from various sources.
+TEMPLATE_LOADERS = (
+    'django.template.loaders.app_directories.Loader',
+)
