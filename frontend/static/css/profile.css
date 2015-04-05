@@ -1,3 +1,35 @@
 .mini_thumb {
     padding-bottom: 5px;
 }
+
+.post {
+  background: rgb(255, 255, 255);
+
+  margin-bottom: 10px;
+
+  padding: 10px;
+
+  -moz-border-radius: 3px;
+  border-radius:      3px;
+  border-bottom-color: rgb(208, 209, 213);
+  border-bottom-left-radius: 3px;
+  border-bottom-right-radius: 3px;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  border-image-outset: 0px;
+  border-image-repeat: stretch;
+  border-image-slice: 100%;
+  border-image-source: none;
+  border-image-width: 1;
+  border-left-color: rgb(223, 224, 228);
+  border-left-style: solid;
+  border-left-width: 1px;
+  border-right-color: rgb(223, 224, 228);
+  border-right-style: solid;
+  border-right-width: 1px;
+  border-top-color: rgb(229, 230, 233);
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+  border-top-style: solid;
+  border-top-width: 1px;
+}

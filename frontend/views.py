@@ -49,6 +49,7 @@ def profile(request, username):
         # getting your own profile
         # confirmed_friends = Friendship.objects.filter(Q(to_friend=request.user)|Q(from_friend=request.user), confirmed=True)
         # params['confirmed_friends'] = list(confirmed_friends)
+        params['statuses'] = Status.objects.filter(user=request.user)
         params['photo_form'] = PhotoForm()
         params['status_form'] = StatusForm()
         return render(request, 'profile.html', params)
