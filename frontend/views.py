@@ -62,9 +62,6 @@ def profile(request, username):
                                    (Q(from_friend=request.user) & Q(to_friend=other_user)),
                                    confirmed=True).count() == 1:
         # getting a friend's profile
-
-        params['statuses'] = Status.objects.filter(user=other_user)
-
         return render(request, 'profile_friend.html', params)
     else:
         # getting someone else's profile
@@ -138,12 +135,15 @@ def interest(request, interest_id):
 
 
 def search(request):
+    params = {}
     query = request.GET['query']
     terms = query.split(' ')
     people = FaceSpaceUser.objects.all()
     for term in terms:
         people = people.filter(Q(first_name__icontains=term) | Q(last_name__icontains=term))
 
-    params = {'results': people}
+    #params = {'results': people}
+    params['results'] = people
+    params['keyword'] = query
 
     return render(request, 'search.html', params)
