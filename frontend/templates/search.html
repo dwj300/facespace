@@ -38,6 +38,7 @@
         <b>Friend Request Sent</b>
         {% elif result_user.id in user.pending_friends %}
         <a href="{% url 'confirm_username' result_user.username %}"><b>Confirm Friend</b></a>
+        {% elif result_user == user %}
         {% else %}
         <a href="{% url 'friend' result_user.id %}"><b>Add Friend</b></a>
         {% endif %}
