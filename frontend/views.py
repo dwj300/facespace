@@ -5,6 +5,7 @@ from backend.models import Friendship, Interest
 from backend.forms import PhotoForm, InterestForm, AdForm, BidForm, StatusForm
 from django.db.models import Q
 from django.core.exceptions import ObjectDoesNotExist
+from datetime import datetime
 
 
 @public
@@ -76,8 +77,20 @@ def profile(request, username):
 
 
 def bid(request, interest_id):
-    form = BidForm()
+
     interest = Interest.objects.get(id=interest_id)
+
+    if request.POST:
+        price = float(request.POST.get('price'))
+        ad_id = request.POST.get('ad')
+        if interest.bid_price < price:
+            interest.will_hold = Ad.objects.get(id=ad_id)
+            interest.bid_price = price
+            interest.bid_time = datetime.now()
+            interest.save()
+            return redirect('interest', interest_id)
+    
+    form = BidForm(user=request.user,init_price=interest.bid_price)
     params = {'form': form, 'interest': interest}
     return render(request, 'bid.html', params)
 

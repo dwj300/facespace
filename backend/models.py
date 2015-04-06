@@ -24,7 +24,7 @@ class Ad(models.Model):
     owner = models.ForeignKey('FaceSpaceUser', null=False)
 
     def __unicode__(self):
-        return str(self.id)
+        return str(self.name)
 
     class Meta:
         db_table = 'ads'
