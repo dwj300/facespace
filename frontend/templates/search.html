@@ -2,48 +2,14 @@
 {% block content %}
 {% load thumbnail %}
 
+<div class="index">
 <div class="row">
   <form action="{% url 'search' %}" method="get">
     <div class="col-md-9 input-group">
-<<<<<<< HEAD
-    	<input type="text" class="form-control input-lg" name="query" placeholder = "Search for result_user..." value="{{ keyword }}">
-        <span class="input-group-btn btn-default">
-        	<button class="btn btn-lg" type="submit" contenteditable="false" style="background-color: #3b5998; color: #ffffff">SEARCH</button>
-    	</span>
-	</div>
-	</form>
-    <div class="col-md-8">
-    	{% if results %}
-    	<h3 align="left">Results</h3>
-    	{% for result_user in results %}
-    	<div class="well" style="height: 140px">
-        	<div class="col-md-2">
-        	<a href="{% url 'profile' result_user.username %}">
-        	{% thumbnail result_user.profile_picture.image "100x100" crop="center" as im %}
-        	<img class="mini_prof_pic" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
-        	{% endthumbnail %}
-        	</a>
-        	</div>
-        	<div class="col-md-6"><span class="pull-left"><a href="{% url 'profile' result_user.username %}"><h4 style="color: #000000">{{ result_user.get_full_name }}</h4></a></span></div>
-        	<div class="col-md-4">
-        	{% if result_user in user.confirmed_friends %}
-        	<span class="glyphicon glyphicon-ok"></span> <b>Friends</b>
-        	{% elif result_user == user %}
-        	{% else %}
-        	<a href="{% url 'friend' result_user.id %}"><b>Add Friend</b></a>
-        	{% endif %}
-        	</div>
-      	</div>
-      	{% endfor %}
-      	{% else %}
-      	<h3 align="left">Your search "{{ keyword }}" didn't match any users.</h3>
-      	{% endif %}
-=======
       <input type="text" class="form-control input-lg" name="query" placeholder = "Search for user..." value="{{ keyword }}">
       <span class="input-group-btn btn-default">
         <button class="btn btn-lg" type="submit" contenteditable="false" style="background-color: #3b5998; color: #ffffff">SEARCH</button>
       </span>
->>>>>>> origin/master
     </div>
   </form>
 </div>
@@ -51,22 +17,27 @@
   <div class="col-md-8">
     {% if results %}
     <h3 align="left">Results</h3>
-    {% for user in results %}
+    {% for result_user in results %}
     <div class="well" style="height: 140px">
       <div class="col-md-2">
-        <a href="{% url 'profile' user.username %}">
-        {% thumbnail user.profile_picture.image "100x100" crop="center" as im %}
+        <a href="{% url 'profile' result_user.username %}">
+        {% thumbnail result_user.profile_picture.image "100x100" crop="center" as im %}
         <img class="mini_prof_pic" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
         {% endthumbnail %}
         </a>
       </div>
       <div class="col-md-6">
         <span class="pull-left">
-          <a href="{% url 'profile' user.username %}"><h4 style="color: #000000">{{ user.get_full_name }}</h4></a>
+          <a href="{% url 'profile' result_user.username %}"><h4 style="color: #000000">{{ result_user.get_full_name }}</h4></a>
         </span>
       </div>
       <div class="col-md-4">
-        <a href="{% url 'friend' user.id %}">Add Friend</a>
+        {% if result_user in user.confirmed_friends %}
+        <span class="glyphicon glyphicon-ok"></span> <b>Friends</b>
+        {% elif result_user == user %}
+        {% else %}
+        <a href="{% url 'friend' result_user.id %}"><b>Add Friend</b></a>
+        {% endif %}
       </div>
     </div>
     {% endfor %}
@@ -74,5 +45,6 @@
     <h3 align="left">Your search "{{ keyword }}" didn't match any users.</h3>
     {% endif %}
   </div>
+</div>
 </div>
 {% endblock %}
