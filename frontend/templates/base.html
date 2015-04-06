@@ -63,6 +63,17 @@
         </div>
         <div class="col-lg-2">
           <h3>facespace chat</h3>
+          {% for friend in user.confirmed_friends %}
+          {% thumbnail friend.profile_picture.image "30x30" crop="center" as im %}
+          <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
+          {% endthumbnail %}
+          <a href="#" class="select_person" id="{{ friend.username }}">{{ friend.first_name }}</a><br>
+          {% endfor %}
+          <div class="hidden" id="selected_user_id">-1</div>
+          <div>
+            <input class="form-control" type="text" id="text_message" />
+            <button class="btn btn-primary" id="send_message_button">Send message</button>
+          </div>
         </div>
       </div>
     </div>
@@ -84,12 +95,12 @@
             }
         });
 
-        $('#send_message').click(sendMessage);
+        $('#send_message_button').click(sendMessage);
 
         // send message to the server using Ajax
         function sendMessage() {
             $.post('{% url "user_chat" %}', {
-                user: $('#user').val(),
+                user: $('#selected_user_id').text(),
                 message: $('#text_message').val()
             });
         }
@@ -100,6 +111,15 @@
             //billboard.append('<br/>' + msg);
             //billboard.scrollTop(billboard.scrollTop() + 25);
         }
+
+        //function clickChatPerson() {
+            //alert("person_clicked");
+        //    $('#send_message_button').html("blah");
+        //}
+        $('a.select_person').click(function() {
+          $('#send_message_button').html("Send message to " + this.text);
+          $('#selected_user_id').html(this.id);
+        }); 
     });
   </script>
   </body>
