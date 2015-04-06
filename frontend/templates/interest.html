@@ -6,7 +6,7 @@
     {% for child in child_interests.all %}
     <p><a href="{% url 'interest' child.id %}">{{ child.name }}</a></p><br>
     {% endfor %}
-    {% thumbnail interest.holds.content_photo "100x100" crop="center" as im %}
+    {% thumbnail interest.holds.content_photo "200x200" crop="center" as im %}
     <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
     {% endthumbnail %}
     <br/><a href="{% url 'bid' interest.id %}">Bid on tomorrow's ad ({{interest.bid_price}})</a>
