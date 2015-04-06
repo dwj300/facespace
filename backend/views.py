@@ -54,6 +54,15 @@ def confirm(request, friendship_id):
     return redirect('profile', request.user.username)
 
 
+def confirm_username(request, username):
+    friendship = Friendship.objects.get(to_friend=request.user, from_friend__username=username)
+    friendship.confirmed = True
+    friendship.save()
+    messages.success(request, "Confirmed friendship with {0}".format(
+        friendship.from_friend.get_full_name()))
+    return redirect('profile', request.user.username)
+
+
 @public
 def register(request):
     # todo: add form validation

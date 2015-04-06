@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+  {% extends "base.html" %}
 {% block content %}
 {% load thumbnail %}
 
@@ -34,7 +34,10 @@
       <div class="col-md-4">
         {% if result_user in user.confirmed_friends %}
         <span class="glyphicon glyphicon-ok"></span> <b>Friends</b>
-        {% elif result_user == user %}
+        {% elif result_user.id in user.pending_other_friends %}
+        <b>Friend Request Sent</b>
+        {% elif result_user.id in user.pending_friends %}
+        <a href="{% url 'confirm_username' result_user.username %}"><b>Confirm Friend</b></a>
         {% else %}
         <a href="{% url 'friend' result_user.id %}"><b>Add Friend</b></a>
         {% endif %}

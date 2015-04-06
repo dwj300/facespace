@@ -66,6 +66,14 @@ class FaceSpaceUser(AbstractUser):
         return Friendship.objects.filter(to_friend=self, confirmed=False)
 
     @property
+    def pending_friends(self):
+        return map(lambda x: x['from_friend'], Friendship.objects.filter(to_friend=self, confirmed=False).values('from_friend'))
+
+    @property
+    def pending_other_friends(self):
+        return map(lambda x: x['to_friend'], Friendship.objects.filter(from_friend=self, confirmed=False).values('to_friend'))
+
+    @property
     def confirmed_friends(self):
         confirmed_friendships = Friendship.objects.filter(Q(to_friend=self) | Q(from_friend=self), confirmed=True)
         friends = []

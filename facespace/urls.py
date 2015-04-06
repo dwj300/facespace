@@ -21,6 +21,8 @@ urlpatterns = patterns('',
     url(r'^upload_ad_pic/$', 'backend.views.upload', name="upload_ad_pic"),
     url(r'^friend/([0-9]+)/$', 'backend.views.friend', name="friend"),
     url(r'^confirm/([0-9]+)/$', 'backend.views.confirm', name="confirm"),
+    url(r'^confirm_username/([a-zA-Z0-9.]+)/$', 'backend.views.confirm_username', name="confirm_username"),
+
     url(r'^register/$', 'backend.views.register', name="register"),
     url(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
 )
