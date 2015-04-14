@@ -8,4 +8,4 @@ General:
 Add 'confirm' button to confirm friendships, instead of just someone's name
 
 reject friendship?
-
+unfriend?
