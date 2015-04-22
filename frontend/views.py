@@ -167,6 +167,7 @@ def interest(request, interest_id):
 
 
 def search(request):
+    #todo: interests search
     params = {}
     query = request.GET['query']
     terms = query.split(' ')
@@ -181,6 +182,7 @@ def search(request):
     params['user_results'] = people
     params['status_results'] = posts
 #    params['interest_results'] = interests
+#
 
     params['keyword'] = query
 
