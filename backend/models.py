@@ -84,6 +84,10 @@ class FaceSpaceUser(AbstractUser):
                 friends.append(friendship.to_friend)
         return friends
 
+    @property
+    def pending_romances(self):
+        return Romance.objects.filter(to_partner=self,confirmed=False)
+
     def __unicode__(self):
         return self.get_full_name()
 
@@ -146,6 +150,7 @@ class Romance(models.Model):
     romance_type = models.CharField(max_length=10, choices=ROMANCE_TYPES, default=DATING)
     since = models.DateField()
     until = models.DateField(null=True, blank=True)
+    confirmed = models.BooleanField(default=False)
 
     def __unicode__(self):
         return " ".join([str(self.from_partner), "<3", str(self.to_partner)])

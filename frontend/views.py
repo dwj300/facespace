@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from stronghold.decorators import public
 from backend.models import Ad, FaceSpaceUser, Status
-from backend.models import Friendship, Interest
+from backend.models import Friendship, Interest, Romance
 from backend.forms import PhotoForm, InterestForm, AdForm, BidForm, StatusForm
 from django.db.models import Q
 from django.core.exceptions import ObjectDoesNotExist
@@ -41,7 +41,6 @@ def newsfeed(request):
 
 
 def profile(request, username):
-    # todo: romance
     params = {}
     try:
         other_user = FaceSpaceUser.objects.get(username=username)
@@ -64,6 +63,21 @@ def profile(request, username):
                                    confirmed=True).count() == 1:
         # getting a friend's profile
         params['statuses'] = Status.objects.filter(user=other_user)
+        try:
+            romance = Romance.objects.get((Q(to_partner=request.user) & Q(from_partner=other_user)) | (
+            Q(from_partner=request.user) & Q(to_partner=other_user)))
+            if romance.romance_type == Romance.DATING:
+                params['next_romance'] = 'Propose'
+                params['next_breakup'] = 'Breakup'
+            elif romance.romance_type == Romance.ENGAGED:
+                params['next_romance'] = 'Get Married!'
+                params['next_breakup'] = 'Break it off'
+            else:
+                params['next_romance'] = ''
+                params['next_breakup'] = 'Get divorced!'
+        except:
+            params['next_romance'] = 'Go Steady'
+            params['next_breakup'] = ''
         return render(request, 'profile_friend.html', params)
     else:
         # getting someone else's profile
@@ -89,8 +103,8 @@ def bid(request, interest_id):
             interest.bid_time = datetime.now()
             interest.save()
             return redirect('interest', interest_id)
-    
-    form = BidForm(user=request.user,init_price=interest.bid_price)
+
+    form = BidForm(user=request.user, init_price=interest.bid_price)
     params = {'form': form, 'interest': interest}
     return render(request, 'bid.html', params)
 

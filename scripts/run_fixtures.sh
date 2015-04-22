@@ -1,2 +1,2 @@
 python manage.py migrate
-python manage.py loaddata fix1.json
+python manage.py loaddata fixture.json
