@@ -27,7 +27,9 @@ def newsfeed(request):
 
     # get stuff
     # todo: filter only friends' content
-    statuses = Status.objects.all()
+    friends = request.user.confirmed_friends
+    friends.append(request.user)
+    statuses = Status.objects.all().filter(user__in=friends).order_by('-time_created')
     # likes = Like.objects.all()
     # comments = Comment.objects.all()
     # friendships = Friendship.objects.all()
@@ -36,6 +38,8 @@ def newsfeed(request):
 
     params['statuses'] = statuses
     params['user'] = request.user
+
+
 
     return render(request, 'home.html', params)
 
