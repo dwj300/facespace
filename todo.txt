@@ -1,11 +1,7 @@
-In this file, lets put everything to do, organized by page.
-If it doesn't fall under a specific page, put it under 'General'.
-
-General:
-    Make messages look pretty
-    ajax
-    
-Add 'confirm' button to confirm friendships, instead of just someone's name
-
-reject friendship?
-unfriend?
+Sam - Enough data
+Sam - Relationships
+Matt - Comments/Likes
+Doug - Chat
+Yizzle - Search
+Doug - Unfriend
+Matt - Polish newsfeed
