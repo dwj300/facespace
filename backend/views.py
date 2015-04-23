@@ -1,8 +1,7 @@
 from django.shortcuts import redirect
-from backend.models import FaceSpaceUser, Friendship, Photo, Ad, Status, Romance
+from backend.models import FaceSpaceUser, Friendship, Ad, Romance
 from backend.forms import PhotoForm, StatusForm
 from django.contrib import messages
-from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
 from stronghold.decorators import public
 from datetime import date
@@ -44,11 +43,13 @@ def friend(request, other_friend_id):
     messages.success(request, "Sent friend request to {0}.".format(other_friend.get_full_name()))
     return redirect('profile', other_friend.username)
 
+
 def romance_up(request, other_partner_id):
     other_partner = FaceSpaceUser.objects.get(id=other_partner_id)
     Romance.objects.create(to_partner=other_partner, from_partner=request.user, since=date.today())
     messages.success(request, "Sent romance request to {0}.".format(other_partner.get_full_name()))
     return redirect('profile', other_partner.username)
+
 
 def romance_down(request, other_partner_id):
     other_partner = FaceSpaceUser.objects.get(id=other_partner_id)
@@ -62,6 +63,7 @@ def confirm(request, friendship_id):
     messages.success(request, "Confirmed friendship with {0}".format(
         friendship.from_friend.get_full_name()))
     return redirect('profile', request.user.username)
+
 
 def confirm_romance(request, romance_id):
     romance = Romance.objects.get(id=romance_id)
@@ -87,13 +89,13 @@ def register(request):
     birthday = date(year=int(request.POST['birthday_year']),
                     month=int(request.POST['birthday_month']),
                     day=int(request.POST['birthday_day']))
-    user = FaceSpaceUser.objects.create_user(username=request.POST['username'],
-                                             password=request.POST['password'],
-                                             email=request.POST['email'],
-                                             birthday=birthday,
-                                             is_male=bool(int(request.POST['sex'])),
-                                             first_name=request.POST['firstname'],
-                                             last_name=request.POST['lastname'])
+    FaceSpaceUser.objects.create_user(username=request.POST['username'],
+                                      password=request.POST['password'],
+                                      email=request.POST['email'],
+                                      birthday=birthday,
+                                      is_male=bool(int(request.POST['sex'])),
+                                      first_name=request.POST['firstname'],
+                                      last_name=request.POST['lastname'])
 
     auth_user = authenticate(username=request.POST['username'], password=request.POST['password'])
     login(request, auth_user)
