@@ -169,6 +169,7 @@ class UserChatView(TemplateView):
         return super(UserChatView, self).dispatch(*args, **kwargs)
 
     def post(self, request, *args, **kwargs):
+        print request.POST.get('user')
         redis_publisher = RedisPublisher(facility='foobar', users=[request.POST.get('user')])
         message = RedisMessage(request.POST.get('message'))
         redis_publisher.publish_message(message)
