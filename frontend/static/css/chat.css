@@ -99,3 +99,8 @@
 textarea {
     resize: none;
 }
+
+.from_chat_box {
+    background-image: -webkit-linear-gradient(bottom, #c7defe, #e7f1fe);
+    text-align: right;
+}

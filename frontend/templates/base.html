@@ -96,7 +96,7 @@
                         user: user,
                         message: JSON.stringify(data)
                     });
-            $(textbox).parent().parent().parent().find("#convo").append(data.full_name + ": " + message_text+"<br>");
+            $(textbox).parent().parent().parent().find("#convo").append('<div class="from_chat_box">'+data.full_name + ": " + message_text+'</div>');
             $(textbox).val('');
     }
 
