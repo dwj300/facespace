@@ -1,5 +1,5 @@
 from django.shortcuts import redirect
-from backend.models import FaceSpaceUser, Friendship, Photo, Ad, Status
+from backend.models import FaceSpaceUser, Friendship, Photo, Ad, Status, Romance
 from backend.forms import PhotoForm, StatusForm
 from django.contrib import messages
 from django.contrib.auth.models import User
@@ -46,12 +46,14 @@ def friend(request, other_friend_id):
 
 def romance_up(request, other_partner_id):
     other_partner = FaceSpaceUser.objects.get(id=other_partner_id)
-    Romance.objects.create(to_friend=other_partner, from_friend=request.user)
+    Romance.objects.create(to_partner=other_partner, from_partner=request.user, since=date.today())
     messages.success(request, "Sent romance request to {0}.".format(other_partner.get_full_name()))
     return redirect('profile', other_partner.username)
 
 def romance_down(request, other_partner_id):
-    return None
+    other_partner = FaceSpaceUser.objects.get(id=other_partner_id)
+    return redirect('profile', other_partner.username)
+
 
 def confirm(request, friendship_id):
     friendship = Friendship.objects.get(id=friendship_id)
