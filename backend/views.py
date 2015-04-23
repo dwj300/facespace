@@ -44,9 +44,34 @@ def friend(request, other_friend_id):
     messages.success(request, "Sent friend request to {0}.".format(other_friend.get_full_name()))
     return redirect('profile', other_friend.username)
 
+def romance_up(request, other_partner_id):
+    other_partner = FaceSpaceUser.objects.get(id=other_partner_id)
+    Romance.objects.create(to_friend=other_partner, from_friend=request.user)
+    messages.success(request, "Sent romance request to {0}.".format(other_partner.get_full_name()))
+    return redirect('profile', other_partner.username)
+
+def romance_down(request, other_partner_id):
+    return None
 
 def confirm(request, friendship_id):
     friendship = Friendship.objects.get(id=friendship_id)
+    friendship.confirmed = True
+    friendship.save()
+    messages.success(request, "Confirmed friendship with {0}".format(
+        friendship.from_friend.get_full_name()))
+    return redirect('profile', request.user.username)
+
+def confirm_romance(request, romance_id):
+    romance = Romance.objects.get(id=romance_id)
+    romance.confirmed = True
+    romance.save()
+    messages.success(request, "Confirmed romance with {0}".format(
+        romance.from_partner.get_full_name()))
+    return redirect('profile', request.user.username)
+
+
+def confirm_username(request, username):
+    friendship = Friendship.objects.get(to_friend=request.user, from_friend__username=username)
     friendship.confirmed = True
     friendship.save()
     messages.success(request, "Confirmed friendship with {0}".format(

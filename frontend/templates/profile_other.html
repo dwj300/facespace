@@ -3,7 +3,7 @@
 
 {% block content %}
 <div class="index">
-  <h1>Here is {{ facespaceuser.first_name }}'s, profile.</h1>
+  <h1>Here is {{ facespaceuser.first_name }}'s profile.</h1>
 
   {% thumbnail facespaceuser.profile_picture.image "100x100" crop="center" as im %}
     <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">

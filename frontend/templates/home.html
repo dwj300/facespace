@@ -19,12 +19,7 @@ body {
 }
 
 .post {
-  background: rgb(255, 255, 255);
-
   margin-bottom: 10px;
-
-  padding: 10px;
-
   -moz-border-radius: 3px;
   border-radius:      3px;
   border-bottom-color: rgb(208, 209, 213);
@@ -48,6 +43,76 @@ body {
   border-top-right-radius: 3px;
   border-top-style: solid;
   border-top-width: 1px;
+}
+
+.upper {
+  background: rgb(255, 255, 255);
+  padding: 10px;
+  border-bottom-color: rgb(225, 226, 227);
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+}
+
+.meta {
+  color: rgb(20, 24, 35);
+  background-color: rgb(246, 247, 248);
+  font-family: helvetica, arial, 'lucida grande', sans-serif;
+  font-size: 12px;
+  line-height: 16.0799999237061px;
+  margin-bottom: 0px;
+  margin-left: 0px;
+  margin-right: 0px;
+  margin-top: 0px;
+  padding-bottom: 0px;
+  padding-left: 0px;
+  padding-right: 0px;
+  padding-top: 0px;
+  text-align: left;
+  word-wrap: break-word;
+}
+
+.likes {
+  
+
+  border-bottom-color: rgb(225, 226, 227);
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  color: rgb(20, 24, 35);
+  font-family: helvetica, arial, 'lucida grande', sans-serif;
+  font-size: 12px;
+
+  line-height: 16.0799999237061px;
+  margin-bottom: 0px;
+  margin-left: 12px;
+  margin-right: 12px;
+  margin-top: 0px;
+  padding-bottom: 7px;
+  padding-left: 0px;
+  padding-right: 0px;
+  padding-top: 9px;
+  text-align: left;
+  word-wrap: break-word;
+}
+
+.comments {
+  border-bottom-left-radius: 2px;
+  border-bottom-right-radius: 2px;
+  border-top-left-radius: 0px;
+  border-top-right-radius: 0px;
+  color: rgb(20, 24, 35);
+  font-family: helvetica, arial, 'lucida grande', sans-serif;
+  font-size: 12px;
+  line-height: 16.0799999237061px;
+  margin-bottom: 0px;
+  margin-left: 12px;
+  margin-right: 12px;
+  margin-top: 0px;
+  padding-bottom: 8px;
+  padding-left: 0px;
+  padding-right: 0px;
+  padding-top: 2px;
+  text-align: left;
+  word-wrap: break-word;
 }
 
 .mini_prof_pic {
@@ -89,20 +154,31 @@ body {
   <div class="feed col-xs-8">
     {% for s in statuses %}
     <div class="post">
-      <div class="header">
-        <a href="{% url 'profile' s.user.username %}">
-          {% thumbnail s.user.profile_picture.image "40x40" crop="center" as im %}
-            <img class="mini_prof_pic" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
-          {% endthumbnail %}
-        </a>
-        <a href="{% url 'profile' s.user.username %}">{{ s.user }}</a>
+      <div class="upper">
+        <div class="header">
+          <a href="{% url 'profile' s.user.username %}">
+            {% thumbnail s.user.profile_picture.image "40x40" crop="center" as im %}
+              <img class="mini_prof_pic" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
+            {% endthumbnail %}
+          </a>
+          <a href="{% url 'profile' s.user.username %}">{{ s.user }}</a>
+        </div>
+        <div class="body">
+          <div class="text">{{ s.text }}</div>
+          <div class="lcs"><a>Like</a> · <a>Comment</a></div>
+        </div>
       </div>
-      <div class="body">
-        <div class="text">{{ s.text }}</div>
-      </div>
-      <div>
-        <div class="likes"></div>
-        <div class="comments"></div>
+      <div class="meta">
+        <div class="likes">
+          <span class="glyphicon glyphicon-thumbs-up"></span> 5 people like this.
+        </div>
+        <div class="comments">
+          <div class="comment_pic">
+            {% thumbnail s.user.profile_picture.image "40x40" crop="center" as im %}
+              <img class="mini_prof_pic" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}"></div>
+            {% endthumbnail %}
+          <div class="comment_box"></div>
+        </div>
       </div>
     </div>
     {% endfor %}
