@@ -37,10 +37,13 @@ def newsfeed_list(request):
 
     for p in ps:
         post = {}
+        post['post_id'] = p.id
         post['user_id'] = p.user.id
         post['user_name'] = p.user.username
         post['age'] = '22 mins'
         post['text'] = p.text
+        post['liked'] = Like.objects.filter(entity=p.id).filter(user=request.user).filter(is_positive=True).exists()
+        post['disliked'] = Like.objects.filter(entity=p.id).filter(user=request.user).filter(is_positive=False).exists()
 
         likes = []
 
