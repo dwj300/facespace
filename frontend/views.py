@@ -167,14 +167,23 @@ def interest(request, interest_id):
 
 
 def search(request):
+    #todo: interests search
     params = {}
     query = request.GET['query']
     terms = query.split(' ')
     people = FaceSpaceUser.objects.all()
+    posts = Status.objects.all()
+    interests = Interest.objects.all()
     for term in terms:
         people = people.filter(Q(first_name__icontains=term) | Q(last_name__icontains=term))
+        posts = posts.filter(text__icontains=term)
+        interests = interests.filter(name__icontains=term)
 
-    params['results'] = people
+    params['user_results'] = people
+    params['status_results'] = posts
+#    params['interest_results'] = interests
+#
+
     params['keyword'] = query
 
     return render(request, 'search.html', params)
