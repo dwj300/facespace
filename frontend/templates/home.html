@@ -326,7 +326,7 @@ body {
                 <a href="{% url 'profile' s.user.username %}" class="prof_link">{{ s.user }}</a>
                 This is the comment itself.
                 <div class="comment_meta">
-                  <span>55 mins</span> · <a href="">Like</a>
+                  <span>55 mins</span>
                 </div>
               </div>
             </div>
@@ -341,7 +341,7 @@ body {
                 <a href="{% url 'profile' user.username %}" class="prof_link">{{ user }}</a>
                 This is another comment.
                 <div class="comment_meta">
-                  <span>40 mins</span> · <a href="">Like</a>
+                  <span>40 mins</span>
                 </div>
               </div>
             </div>
@@ -356,7 +356,7 @@ body {
                 <a href="{% url 'profile' s.user.username %}" class="prof_link">{{ s.user }}</a>
                 This is the last comment.
                 <div class="comment_meta">
-                  <span>5 mins</span> · <a href="">Like</a>
+                  <span>5 mins</span>
                 </div>
               </div>
             </div>
@@ -400,8 +400,13 @@ $(document).ready(function(){
       else
       {
         $.each(data.posts, function(i, p){
+          console.log('top');
+          console.log(p.likes.length);
+          console.log('mid');
+          console.log(p.dislikes.length);
+          console.log('bottom');
            
-          html =  '<div class="post" id="post' + p.id + '">' +
+          html =  '<div class="post" id="post_' + p.post_id + '">' +
                     '<div class="upper">' +
                       '<div class="header">' +
                         '<div class="header_pic">' +
@@ -409,7 +414,7 @@ $(document).ready(function(){
                               '<img class="post_prof_pic" src="??" width="40" height="40"> <!--todo-->' +
                           '</a>' +
                         '</div>' +
-                        '<a href="./profile/' + p.user_name + '/" class="prof_link">' + p.user_name + '</a>' +
+                        '<a href="./profile/' + p.user_name + '/" class="prof_link">' + p.full_name + '</a>' +
                         '<br>' +
                         '<span class="post_meta">' + p.age + '</span>' +
                       '</div>' +
@@ -425,7 +430,7 @@ $(document).ready(function(){
                         '<a><span class="glyphicon glyphicon-thumbs-up"></span></a> <a href="" class="">' + (p.likes.length - p.dislikes.length) + ' people</a> like this.' +
                       '</div>' +
                       '<div class="comment_town">' +
-                        '<div class="comments">' +
+                        '<div class="comments" id="comments_' + p.post_id + '">' +
 
                         '</div>' +
                         '<div class="new_comment_box">' +
@@ -444,6 +449,28 @@ $(document).ready(function(){
                   '</div>';
           console.log(html);
           $('#feed').append(html);
+
+          console.log('hi');
+
+          $.each(p.comments, function(j, c){
+            console.log('hii');
+            comm_html = '<div class="comment">' +
+                          '<div class="comment_pic">' +
+                              '<img class="mini_prof_pic" src="??" width="32" height="32">' +
+                          '</div>' +
+                          '<div class="comment_box">' +
+                            '<a href="./profile/' + c.user_name + '/" class="prof_link">' + c.user_full_name + '</a> ' +
+                            c.text +
+                            '<div class="comment_meta">' +
+                              '<span>' + c.age + '</span>' +
+                            '</div>' +
+                          '</div>' +
+                        '</div>';
+            console.log('hiii');                        
+            $('#comments_' + p.post_id).append(comm_html);
+            console.log('hiiii');
+          });
+
         });
       }
     });

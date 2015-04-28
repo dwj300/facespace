@@ -44,6 +44,9 @@ class Entity(models.Model):
     time_created = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey('FaceSpaceUser')
 
+    def __unicode__(self):
+        return str(self.user) + str(self.time_created)
+
     class Meta:
         verbose_name_plural = 'Entities'
         db_table = 'entities'

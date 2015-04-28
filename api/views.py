@@ -40,6 +40,7 @@ def newsfeed_list(request):
         post['post_id'] = p.id
         post['user_id'] = p.user.id
         post['user_name'] = p.user.username
+        post['full_name'] = p.user.get_full_name()
         post['age'] = '22 mins'
         post['text'] = p.text
         post['liked'] = Like.objects.filter(entity=p.id).filter(user=request.user).filter(is_positive=True).exists()
@@ -66,12 +67,14 @@ def newsfeed_list(request):
         for c in Comment.objects.filter(entity=p.id).order_by('time_created'):
             comments.append({'user_name': c.user.username,
                              'user_id': c.user.id,
+                             'user_full_name': c.user.get_full_name(),
                              'text': c.text,
                              'age': '5 days'
                             })
 
-
+        post['comments'] = comments
         posts.append(post)
+
 
     response = {'code': 200,
                 'posts': posts,
