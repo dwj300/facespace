@@ -18,6 +18,10 @@ body {
   color: black;
 }
 
+.header_pic {
+  float:left;
+}
+
 .post {
   margin-bottom: 10px;
   -moz-border-radius: 3px;
@@ -43,6 +47,21 @@ body {
   border-top-right-radius: 3px;
   border-top-style: solid;
   border-top-width: 1px;
+}
+
+.post_meta {
+  color: rgb(145, 151, 163);
+  direction: ltr;
+  display: inline;
+  font-family: helvetica, arial, 'lucida grande', sans-serif;
+  font-size: 12px;
+  font-weight: normal;
+  height: auto;
+  line-height: 16.0799999237061px;
+  text-align: left;
+  width: auto;
+  word-wrap: break-word;
+  zoom: 1;
 }
 
 .upper {
@@ -71,9 +90,40 @@ body {
   word-wrap: break-word;
 }
 
-.likes {
-  
+.lcs {
+  color: rgb(145, 151, 163);
+  direction: ltr;
+  display: block;
+  font-family: helvetica, arial, 'lucida grande', sans-serif;
+  font-size: 12px;
+  height: 16px;
+  line-height: 16.0799999237061px;
+  text-align: left;
+  width: 470px;
+  word-wrap: break-word;
+  zoom: 1;
+  margin-top:10px;
 
+
+}
+
+.lcs a {
+  color: rgb(109, 132, 180);
+  cursor: pointer;
+  direction: ltr;
+  display: inline;
+  font-family: helvetica, arial, 'lucida grande', sans-serif;
+  font-size: 12px;
+  height: auto;
+  line-height: 16.0799999237061px;
+  text-align: left;
+  width: auto;
+  word-wrap: break-word;
+  zoom: 1;
+  font-weight:normal;
+}
+
+.likes {
   border-bottom-color: rgb(225, 226, 227);
   border-bottom-style: solid;
   border-bottom-width: 1px;
@@ -94,7 +144,25 @@ body {
   word-wrap: break-word;
 }
 
-.comments {
+.likes a {
+  color: rgb(59, 89, 152);
+  cursor: pointer;
+  direction: ltr;
+  display: inline;
+  font-family: helvetica, arial, 'lucida grande', sans-serif;
+  font-size: 12px;
+  height: auto;
+  line-height: 16.0799999237061px;
+  list-style-type: none;
+  text-align: left;
+  text-decoration: none;
+  unicode-bidi: embed;
+  width: auto;
+  word-wrap: break-word;
+  zoom: 1;
+}
+
+.comment_town {
   border-bottom-left-radius: 2px;
   border-bottom-right-radius: 2px;
   border-top-left-radius: 0px;
@@ -107,23 +175,91 @@ body {
   margin-left: 12px;
   margin-right: 12px;
   margin-top: 0px;
-  padding-bottom: 8px;
+  padding-bottom: 0px;
   padding-left: 0px;
   padding-right: 0px;
-  padding-top: 2px;
+  padding-top: 8px;
   text-align: left;
   word-wrap: break-word;
+  
+}
+
+.comment {
+  padding-bottom: 4px;
+
+}
+
+.comment_pic {
+  float: left;;
+}
+
+.comment_meta {
+  color: rgb(145, 151, 163);
+
+  font-family: helvetica, arial, 'lucida grande', sans-serif;
+  font-size: 12px;
+  font-weight: normal;
+  height: auto;
+  line-height: 16.0799999237061px;
+  list-style-image: none;
+  list-style-position: outside;
+  list-style-type: none;
+  text-align: left;
+  word-wrap: break-word;
+  zoom: 1;
+}
+
+.comment_meta a {
+  color: rgb(59, 89, 152);
+
+  display: inline;
+  font-family: helvetica, arial, 'lucida grande', sans-serif;
+  font-size: 12px;
+  font-weight: normal;
+  height: auto;
+  line-height: 16.0799999237061px;
+  list-style-image: none;
+  list-style-position: outside;
+  list-style-type: none;
+  text-align: left;
+
+  width: auto;
+  word-wrap: break-word;
+  zoom: 1;
+}
+
+.new_comment_box {
+  min-height: 44px; 
+  padding-top: 4px;
+}
+
+.new_comment_text {
+  width:682px;
+  min-height:30px;
 }
 
 .mini_prof_pic {
-  margin-right:5px;
-  margin-top:5px;
+  margin-right:8px;
+  margin-top:0px;
   vertical-align: top;
 }
 
-.post a {
+.post_prof_pic {
+  margin-right:8px;
+  margin-top:0px;
+  vertical-align: top;
+}
+
+.header .prof_link {
   color:rgb(59, 89, 152);
   font-weight: bold;
+  font-size:14px;
+}
+
+.comment_box .prof_link {
+  color:rgb(59, 89, 152);
+  font-weight: bold;
+  font-size:12px;
 }
 
 .post .body {
@@ -152,16 +288,21 @@ body {
   </div>
 
   <div class="feed col-xs-8">
+
     {% for s in statuses %}
     <div class="post">
       <div class="upper">
         <div class="header">
-          <a href="{% url 'profile' s.user.username %}">
-            {% thumbnail s.user.profile_picture.image "40x40" crop="center" as im %}
-              <img class="mini_prof_pic" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
-            {% endthumbnail %}
-          </a>
-          <a href="{% url 'profile' s.user.username %}">{{ s.user }}</a>
+          <div class="header_pic">
+            <a href="{% url 'profile' s.user.username %}">
+              {% thumbnail s.user.profile_picture.image "40x40" crop="center" as im %}
+                <img class="post_prof_pic" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
+              {% endthumbnail %}
+            </a>
+          </div>
+          <a href="{% url 'profile' s.user.username %}" class="prof_link">{{ s.user }}</a>
+          <br>
+          <span class="post_meta">5 hrs</span>
         </div>
         <div class="body">
           <div class="text">{{ s.text }}</div>
@@ -170,18 +311,75 @@ body {
       </div>
       <div class="meta">
         <div class="likes">
-          <span class="glyphicon glyphicon-thumbs-up"></span> 5 people like this.
+          <a><span class="glyphicon glyphicon-thumbs-up"></span></a> <a href="" class="">5 people</a> like this.
         </div>
-        <div class="comments">
-          <div class="comment_pic">
-            {% thumbnail s.user.profile_picture.image "40x40" crop="center" as im %}
-              <img class="mini_prof_pic" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}"></div>
-            {% endthumbnail %}
-          <div class="comment_box"></div>
+        <div class="comment_town">
+          <div class="comments">
+
+            <div class="comment">
+              <div class="comment_pic">
+                {% thumbnail s.user.profile_picture.image "32x32" crop="center" as im %}
+                  <img class="mini_prof_pic" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
+                {% endthumbnail %}
+              </div>
+              <div class="comment_box">
+                <a href="{% url 'profile' s.user.username %}" class="prof_link">{{ s.user }}</a>
+                This is the comment itself.
+                <div class="comment_meta">
+                  <span>55 mins</span> · <a href="">Like</a>
+                </div>
+              </div>
+            </div>
+
+            <div class="comment">
+              <div class="comment_pic">
+                {% thumbnail user.profile_picture.image "32x32" crop="center" as im %}
+                  <img class="mini_prof_pic" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
+                {% endthumbnail %}
+              </div>
+              <div class="comment_box">
+                <a href="{% url 'profile' user.username %}" class="prof_link">{{ user }}</a>
+                This is another comment.
+                <div class="comment_meta">
+                  <span>40 mins</span> · <a href="">Like</a>
+                </div>
+              </div>
+            </div>
+
+            <div class="comment">
+              <div class="comment_pic">
+                {% thumbnail s.user.profile_picture.image "32x32" crop="center" as im %}
+                  <img class="mini_prof_pic" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
+                {% endthumbnail %}
+              </div>
+              <div class="comment_box">
+                <a href="{% url 'profile' s.user.username %}" class="prof_link">{{ s.user }}</a>
+                This is the last comment.
+                <div class="comment_meta">
+                  <span>5 mins</span> · <a href="">Like</a>
+                </div>
+              </div>
+            </div>
+
+          </div>
+          <div class="new_comment_box">
+              <div class="comment_pic">
+                {% thumbnail user.profile_picture.image "32x32" crop="center" as im %}
+                  <img class="mini_prof_pic" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
+                {% endthumbnail %}
+              </div>
+              <div class="new_comment_text_box">
+                <form action="" method="POST">
+                  <input class="new_comment_text" type="text" name="comment" placeholder=" Write a comment...">
+                </form>
+              </div>
+          </div>
+
         </div>
       </div>
     </div>
     {% endfor %}
+
   </div>
 
   <div class="right-margin col-xs-2"></div>
