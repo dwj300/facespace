@@ -157,7 +157,7 @@ class Romance(models.Model):
 
     class Meta:
         db_table = 'romances'
-        unique_together = ('from_partner', 'to_partner', 'since')
+        # unique_together = ('from_partner', 'to_partner', 'since', 'romance_type')
 
 
 class Status(Entity):

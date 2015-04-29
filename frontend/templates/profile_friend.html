@@ -27,7 +27,11 @@
           <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" class="img-thumbnail">
           {% endthumbnail %}
           <h4>{{ facespaceuser.get_full_name }}</h4>
+          {% if not romance_request %}
           <h5>Romance: <a href="{% url 'romance_up' facespaceuser.id %}">{{ next_romance }}</a> &#8226; <a href="{% url 'romance_down' facespaceuser.id %}">{{ next_breakup }}</a></h5>
+          {% else %}
+          <h5>{{ romance_request }}</h5>
+          {% endif %}
         </div>
 
         <div class="feed">
