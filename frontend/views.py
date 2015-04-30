@@ -65,31 +65,51 @@ def profile(request, username):
         # getting your own profile
         # confirmed_friends = Friendship.objects.filter(Q(to_friend=request.user)|Q(from_friend=request.user), confirmed=True)
         # params['confirmed_friends'] = list(confirmed_friends)
-        params['statuses'] = Status.objects.filter(user=request.user)
+        params['statuses'] = Status.objects.filter(user=request.user).order_by('-time_created')
         params['photo_form'] = PhotoForm()
         params['status_form'] = StatusForm()
         return render(request, 'profile.html', params)
+    
     elif Friendship.objects.filter((Q(to_friend=request.user) & Q(from_friend=other_user)) |
                                    (Q(from_friend=request.user) & Q(to_friend=other_user)),
                                    confirmed=True).count() == 1:
         # getting a friend's profile
         params['statuses'] = Status.objects.filter(user=other_user)
-        try:
-            romance = Romance.objects.get((Q(to_partner=request.user) & Q(from_partner=other_user)) | (
-            Q(from_partner=request.user) & Q(to_partner=other_user)))
-            if romance.romance_type == Romance.DATING:
+        
+
+        romances = Romance.objects.filter(
+            (Q(to_partner=request.user) & Q(from_partner=other_user)) | 
+            (Q(from_partner=request.user) & Q(to_partner=other_user)))
+
+        cur_romance = [r for r in romances if r.confirmed == True]
+        if cur_romance:
+            if cur_romance[0].romance_type == Romance.DATING:
                 params['next_romance'] = 'Propose'
                 params['next_breakup'] = 'Breakup'
-            elif romance.romance_type == Romance.ENGAGED:
+            elif cur_romance[0].romance_type == Romance.ENGAGED:
                 params['next_romance'] = 'Get Married!'
                 params['next_breakup'] = 'Break it off'
             else:
                 params['next_romance'] = ''
                 params['next_breakup'] = 'Get divorced!'
-        except:
+
+            print cur_romance[0], cur_romance[0].confirmed
+
+        else:
             params['next_romance'] = 'Go Steady'
             params['next_breakup'] = ''
+
+        requested_romance = [r for r in romances if r.confirmed == False]
+        if requested_romance:
+            if r.from_partner == request.user:
+                params['romance_request'] = 'Romance Request Sent'
+            else:
+                params['romance_request'] = ' '
+
+
+
         return render(request, 'profile_friend.html', params)
+
     else:
         # getting someone else's profile
         try:
@@ -188,7 +208,7 @@ def search(request):
 
     params['user_results'] = people
     params['status_results'] = posts
-#    params['interest_results'] = interests
+    params['interest_results'] = interests
 #
 
     params['keyword'] = query
