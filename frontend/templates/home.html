@@ -273,6 +273,14 @@ body {
   font-family: helvetica, arial, 'lucida grande', sans-serif;
 }
 
+ .tooltip > p{
+   text-align:left;
+ }
+
+ .tooltip-inner {
+    text-align:left;
+}
+
 
 </style>
 
@@ -443,7 +451,7 @@ $(document).ready(function(){
                     '</div>' +
                     '<div class="meta">' +
                       '<div class="likes">' +
-                        '<a><span class="glyphicon glyphicon-thumbs-up"></span></a> <a data-toggle="tooltip" data-placement="top" title="Tooltip on top">' + (p.likes.length - p.dislikes.length) + ' people</a> like this.' +
+                        '<a><span class="glyphicon glyphicon-thumbs-up"></span></a> <a id="likes_' + p.post_id + '" data-toggle="tooltip" data-placement="top" title="">' + (p.likes.length - p.dislikes.length) + ' people</a> like this.' +
                       '</div>' +
                       '<div class="comment_town">' +
                         '<div class="comments" id="comments_' + p.post_id + '">' +
@@ -480,7 +488,7 @@ $(document).ready(function(){
             }
             if (p.dislikes.length > 0)
             {
-              names += (names === '') ? '' : '<br>';
+              names += (names === '') ? '' : '<br><br>';
               names += 'Dislikes:<br>';
               names += $.map( p.dislikes, function( l ) {
                 return l.user_full_name;
@@ -547,6 +555,17 @@ $(document).ready(function(){
               $.getJSON('../api/', {action: 'like_entity', entity_id: post_id, is_positive: 1}).
               done(function(data){
                 console.log('like successful!');
+                if ((data.num_likes + data.num_dislikes) > 0)
+                {
+                  net = (data.num_likes - data.num_dislikes);
+                  console.log(net);
+                  $(('#likes_' + post_id)).html( String(net) + ((net == 1) ? (' person') : (' people')));
+                }
+                else
+                {
+                  $(('#likes_' + post_id)).html('No one'); 
+                }
+                
               });
             }
             else
@@ -556,6 +575,16 @@ $(document).ready(function(){
               $.getJSON('../api/', {action: 'unlike_entity', entity_id: post_id, is_positive: 1}).
               done(function(data){
                 console.log('unlike successful!');
+                if ((data.num_likes + data.num_dislikes) > 0)
+                {
+                  net = (data.num_likes - data.num_dislikes);
+                  console.log(net);
+                  $(('#likes_' + post_id)).html( String(net) + ((net == 1) ? (' person') : (' people')));
+                }
+                else
+                {
+                  $(('#likes_' + post_id)).html('No one'); 
+                }
               });
             }
           });
@@ -576,6 +605,16 @@ $(document).ready(function(){
               $.getJSON('../api/', {action: 'like_entity', entity_id: post_id, is_positive: 0}).
               done(function(data){
                 console.log('dislike successful!');
+                if ((data.num_likes + data.num_dislikes) > 0)
+                {
+                  net = (data.num_likes - data.num_dislikes);
+                  console.log(net);
+                  $(('#likes_' + post_id)).html( String(net) + ((net == 1) ? (' person') : (' people')));
+                }
+                else
+                {
+                  $(('#likes_' + post_id)).html('No one'); 
+                }
               });
             }
             else
@@ -585,6 +624,16 @@ $(document).ready(function(){
               $.getJSON('../api/', {action: 'unlike_entity', entity_id: post_id, is_positive: 0}).
               done(function(data){
                 console.log('undislike successful!');
+                if ((data.num_likes + data.num_dislikes) > 0)
+                {
+                  net = (data.num_likes - data.num_dislikes);
+                  console.log(net);
+                  $(('#likes_' + post_id)).html( String(net) + ((net == 1) ? (' person') : (' people')));
+                }
+                else
+                {
+                  $(('#likes_' + post_id)).html('No one'); 
+                }
               });
 
             }

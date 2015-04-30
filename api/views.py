@@ -225,6 +225,11 @@ def like_entity(request):
                                     request.user.username,
                                     '' if is_pos == 1 else 'dis')}
 
+    response['num_likes'] = Like.objects.filter(entity=entity_id
+                                       ).filter(is_positive=True).count()
+    response['num_dislikes'] = Like.objects.filter(entity=entity_id
+                                       ).filter(is_positive=False).count()
+
     return HttpResponse(json.dumps(response, cls=DjangoJSONEncoder))
 
 def unlike_entity(request):
@@ -254,6 +259,11 @@ def unlike_entity(request):
                     'message': '{} hasn\'t {}liked this entity.'.format(
                                     request.user.username,
                                     '' if is_pos == 1 else 'dis')}  
+
+    response['num_likes'] = Like.objects.filter(entity=entity_id
+                                       ).filter(is_positive=True).count()
+    response['num_dislikes'] = Like.objects.filter(entity=entity_id
+                                       ).filter(is_positive=False).count()
 
     return HttpResponse(json.dumps(response, cls=DjangoJSONEncoder))
     
