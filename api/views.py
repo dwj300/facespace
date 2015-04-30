@@ -114,6 +114,7 @@ def newsfeed_list(request):
 
         for l in Like.objects.filter(entity=p.id).filter(is_positive=True):
             likes.append({'user_name': l.user.username,
+                          'user_full_name': l.user.get_full_name(),
                           'user_id': l.user.id
                          })
         post['likes'] = likes
@@ -122,6 +123,7 @@ def newsfeed_list(request):
 
         for l in Like.objects.filter(entity=p.id).filter(is_positive=False):
             dislikes.append({'user_name': l.user.username,
+                             'user_full_name': l.user.get_full_name(),
                              'user_id': l.user.id
                             })
         post['dislikes'] = dislikes

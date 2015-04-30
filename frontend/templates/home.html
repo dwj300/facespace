@@ -443,7 +443,7 @@ $(document).ready(function(){
                     '</div>' +
                     '<div class="meta">' +
                       '<div class="likes">' +
-                        '<a><span class="glyphicon glyphicon-thumbs-up"></span></a> <a href="" class="">' + (p.likes.length - p.dislikes.length) + ' people</a> like this.' +
+                        '<a><span class="glyphicon glyphicon-thumbs-up"></span></a> <a data-toggle="tooltip" data-placement="top" title="Tooltip on top">' + (p.likes.length - p.dislikes.length) + ' people</a> like this.' +
                       '</div>' +
                       '<div class="comment_town">' +
                         '<div class="comments" id="comments_' + p.post_id + '">' +
@@ -463,6 +463,38 @@ $(document).ready(function(){
                   '</div>';
           console.log(html);
           $('#feed').append(html);
+
+          $(function () {
+            $('[data-toggle="tooltip"]').tooltip({html: true})
+          })
+
+          $(("#post_" + p.post_id)).on("mouseenter", '[data-toggle="tooltip"]', function(){
+            console.log(p.likes.length + p.dislikes.length);
+            names = '';
+            if (p.likes.length > 0)
+            {
+              names += 'Likes:<br>';
+              names += $.map( p.likes, function( l ) {
+                return l.user_full_name;
+              }).join('<br>');
+            }
+            if (p.dislikes.length > 0)
+            {
+              names += (names === '') ? '' : '<br>';
+              names += 'Dislikes:<br>';
+              names += $.map( p.dislikes, function( l ) {
+                return l.user_full_name;
+              }).join('<br>');
+            }
+            if (names === '')
+            {
+              names = 'No one!';
+            }
+
+            console.log(names);
+
+            $(this).attr('title', names).tooltip('fixTitle').tooltip('show');
+          });
 
           $(("#post_" + p.post_id)).on("keyup", "input.new_comment_text", function(e){
             post_id = p.post_id;
