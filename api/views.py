@@ -3,7 +3,9 @@ import json
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http import HttpResponse
 
-from backend.models import Comment, Like, Status
+from sorl.thumbnail import get_thumbnail
+
+from backend.models import Comment, Like, Status, FaceSpaceUser
 
 
 def api(request):
@@ -21,8 +23,31 @@ def api(request):
             return post_comment(request)
         elif request.GET['action'] == 'newsfeed_list':
             return newsfeed_list(request)
+        elif request.GET['action'] == 'get_thumbnail_url':
+            return get_thumbnail_url(request)
 
     print 'well thats not good'
+
+
+def get_thumbnail_url(request):
+    response = {}
+
+    dim = int(request.GET['dim'])
+    user_id = int(request.GET['user_id'])
+
+    user = FaceSpaceUser.objects.get(id=user_id)
+
+    im = get_thumbnail(user.profile_picture.image, 
+                       str(dim) + 'x' + str(dim), 
+                       crop='center')
+
+    response = {'code': 200,
+                'im_url': im.url,
+                'message': 'URLED!'
+               }
+
+    return HttpResponse(json.dumps(response, cls=DjangoJSONEncoder))
+
 
 
 def newsfeed_list(request):
@@ -46,6 +71,12 @@ def newsfeed_list(request):
         post['liked'] = Like.objects.filter(entity=p.id).filter(user=request.user).filter(is_positive=True).exists()
         post['disliked'] = Like.objects.filter(entity=p.id).filter(user=request.user).filter(is_positive=False).exists()
 
+        user = FaceSpaceUser.objects.get(id=p.user.id)
+
+        im40 = get_thumbnail(user.profile_picture.image, '40x40', crop='center')
+
+        post['im_url'] = im40.url
+
         likes = []
 
         for l in Like.objects.filter(entity=p.id).filter(is_positive=True):
@@ -65,19 +96,28 @@ def newsfeed_list(request):
         comments = []
 
         for c in Comment.objects.filter(entity=p.id).order_by('time_created'):
+            user = FaceSpaceUser.objects.get(id=c.user.id)
+
+            im40 = get_thumbnail(user.profile_picture.image, '40x40', crop='center')
+
             comments.append({'user_name': c.user.username,
                              'user_id': c.user.id,
                              'user_full_name': c.user.get_full_name(),
                              'text': c.text,
-                             'age': '5 days'
+                             'age': '5 days',
+                             'im_url': im40.url
                             })
 
         post['comments'] = comments
         posts.append(post)
 
 
+    user = FaceSpaceUser.objects.get(id=request.user.id)
+    im32 = get_thumbnail(user.profile_picture.image, '32x32', crop='center')
+
     response = {'code': 200,
                 'posts': posts,
+                'im_url': im32.url
                }
 
     return HttpResponse(json.dumps(response, cls=DjangoJSONEncoder))

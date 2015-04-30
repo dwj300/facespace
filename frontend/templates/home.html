@@ -411,13 +411,15 @@ $(document).ready(function(){
           console.log('mid');
           console.log(p.dislikes.length);
           console.log('bottom');
+
+
            
           html =  '<div class="post" id="post_' + p.post_id + '">' +
                     '<div class="upper">' +
                       '<div class="header">' +
                         '<div class="header_pic">' +
                           '<a href="./profile/' + p.user_name + '/">' +
-                              '<img class="post_prof_pic" src="??" width="40" height="40"> <!--todo-->' +
+                              '<img class="post_prof_pic" src="' + p.im_url + '" width="40" height="40">' +
                           '</a>' +
                         '</div>' +
                         '<a href="./profile/' + p.user_name + '/" class="prof_link">' + p.full_name + '</a>' +
@@ -441,12 +443,10 @@ $(document).ready(function(){
                         '</div>' +
                         '<div class="new_comment_box">' +
                             '<div class="comment_pic">' +
-                                '<img class="mini_prof_pic" src="??" width="32" height="32"><!--todo-->' +
+                                '<img class="mini_prof_pic" src="' + data.im_url + '" width="32" height="32"><!--todo-->' +
                             '</div>' +
                             '<div class="new_comment_text_box">' +
-                              //'<form action="">' +
                                 '<input id="new_comment_text_' + p.post_id + '" class="new_comment_text" type="text" name="comment" placeholder=" Write a comment...">' +
-                              //'</form>' +
                             '</div>' +
                         '</div>' +
 
@@ -458,6 +458,7 @@ $(document).ready(function(){
 
           $(("#post_" + p.post_id)).on("keyup", "input.new_comment_text", function(e){
             post_id = p.post_id;
+            im_url = p.im_url
             user_name = p.user_name;
             user_full_name = p.full_name;
             if(e.keyCode == 13)
@@ -466,7 +467,7 @@ $(document).ready(function(){
 
                           comm_html = '<div class="comment">' +
                           '<div class="comment_pic">' +
-                              '<img class="mini_prof_pic" src="??" width="32" height="32">' +
+                              '<img class="mini_prof_pic" src="' + im_url + '" width="32" height="32">' +
                           '</div>' +
                           '<div class="comment_box">' +
                             '<a href="./profile/' + user_name + '/" class="prof_link">' + user_full_name + '</a> ' +
@@ -562,7 +563,7 @@ $(document).ready(function(){
             console.log('hii');
             comm_html = '<div class="comment">' +
                           '<div class="comment_pic">' +
-                              '<img class="mini_prof_pic" src="??" width="32" height="32">' +
+                              '<img class="mini_prof_pic" src="' + c.im_url + '" width="32" height="32">' +
                           '</div>' +
                           '<div class="comment_box">' +
                             '<a href="./profile/' + c.user_name + '/" class="prof_link">' + c.user_full_name + '</a> ' +
