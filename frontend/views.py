@@ -201,7 +201,7 @@ def search(request):
 
     params['user_results'] = people
     params['status_results'] = posts
-#    params['interest_results'] = interests
+    params['interest_results'] = interests
 #
 
     params['keyword'] = query
