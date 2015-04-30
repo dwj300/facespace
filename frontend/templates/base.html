@@ -103,7 +103,8 @@
     function receiveMessage(msg) {
             data = JSON.parse(msg);
             //$("#thumb_" + data.user).trigger("click");
-            register_popup(data.user, data.full_name)
+            register_popup(data.user, data.full_name);
+            console.log(data.message);
             
             $("#"+data.user).children(".popup-messages").children("#convo").append(data.full_name + ": " + data.message+"<br>")
             //billboard.append('<br/>' + msg);

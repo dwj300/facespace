@@ -1,0 +1,231 @@
+.inline-headers img, .inline-headers h4 {
+  display: inline-block;
+  vertical-align: baseline;
+}
+
+body {
+	background: rgb(233, 234, 237);
+}
+
+.navbar-inverse {
+	background-color: #3b5998;
+}
+
+.search_box {
+	font-family: 'helvetica neue', helvetica, arial, 'lucida grande', sans-serif;
+	-webkit-font-smoothing: antialiased;
+  	line-height: 19px;
+  	padding: 3px 0 0;
+  	text-shadow: none;
+  	font-size: 14px;
+}
+
+.color_me {
+	color: white;
+}
+
+.mini_prof {
+	margin-top: 5px;
+
+}
+
+.navbar-xs { 
+    min-height:40px;
+    height: 40px; 
+}
+
+.navbar-xs .navbar-brand {
+    padding: 0px 12px;
+    font-size: 16px;
+    line-height: 40px; 
+}
+
+.navbar-xs .navbar-nav > li > a {  
+    padding-top: 0px; 
+    padding-bottom: 0px; 
+    line-height: 40px; 
+}
+
+.search_button {
+    margin-top: 0px;
+}@media only screen and (max-width: 540px) {
+    .chat-sidebar {
+        display: none !important;
+    }
+    .chat-popup {
+        display: none !important;
+    }
+}
+
+.chat-sidebar {
+    width: 200px;
+    position: fixed;
+    height: 100%;
+    right: 0px;
+    top: 0px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border: 1px solid rgba(29, 49, 91, .3);
+    margin-top: 40px;
+}
+
+.sidebar-name {
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-bottom: 4px;
+    font-size: 12px;
+}
+
+.sidebar-name span {
+    padding-left: 5px;
+}
+
+.sidebar-name a {
+    display: block;
+    height: 100%;
+    text-decoration: none;
+    color: inherit;
+}
+
+.sidebar-name:hover {
+    background-color: #e1e2e5;
+}
+
+.sidebar-name img {
+    width: 32px;
+    height: 32px;
+    vertical-align: middle;
+}
+
+.popup-box {
+    display: none;
+    position: fixed;
+    bottom: 0px;
+    right: 220px;
+    height: 285px;
+    background-color: rgb(237, 239, 244);
+    width: 300px;
+    border: 1px solid rgba(29, 49, 91, .3);
+}
+
+.popup-box .popup-head {
+    background-color: #6d84b4;
+    padding: 5px;
+    color: white;
+    font-weight: bold;
+    font-size: 14px;
+    clear: both;
+}
+
+.popup-box .popup-head .popup-head-left {
+    float: left;
+}
+
+.popup-box .popup-head .popup-head-right {
+    float: right;
+    opacity: 0.5;
+}
+
+.popup-box .popup-head .popup-head-right a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.popup-box .popup-messages {
+    height: 100%;
+    overflow-y: scroll;
+}
+
+.chat_footer {
+    position: absolute;
+    bottom: 0;
+}
+
+.full {
+    width: 298px;
+    height: 27px;
+}
+
+textarea {
+    resize: none;
+}
+
+.from_chat_box {
+    background-image: -webkit-linear-gradient(bottom, #c7defe, #e7f1fe);
+    text-align: right;
+}
+body {
+  padding-top: 40px;
+  padding-bottom: 40px;
+  background-color: #eee;
+}
+
+.form-signin {
+  max-width: 330px;
+  padding: 15px;
+  margin: 0 auto;
+}
+.form-signin .form-signin-heading,
+.form-signin .checkbox {
+  margin-bottom: 10px;
+}
+.form-signin .checkbox {
+  font-weight: normal;
+}
+.form-signin .form-control {
+  position: relative;
+  height: auto;
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+  padding: 10px;
+  font-size: 16px;
+}
+.form-signin .form-control:focus {
+  z-index: 2;
+}
+.form-signin input[type="email"] {
+  margin-bottom: -1px;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+.form-signin input[type="password"] {
+  margin-bottom: 10px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+.mini_thumb {
+    padding-bottom: 5px;
+}
+
+.post {
+  background: rgb(255, 255, 255);
+
+  margin-bottom: 10px;
+
+  padding: 10px;
+
+  -moz-border-radius: 3px;
+  border-radius:      3px;
+  border-bottom-color: rgb(208, 209, 213);
+  border-bottom-left-radius: 3px;
+  border-bottom-right-radius: 3px;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  border-image-outset: 0px;
+  border-image-repeat: stretch;
+  border-image-slice: 100%;
+  border-image-source: none;
+  border-image-width: 1;
+  border-left-color: rgb(223, 224, 228);
+  border-left-style: solid;
+  border-left-width: 1px;
+  border-right-color: rgb(223, 224, 228);
+  border-right-style: solid;
+  border-right-width: 1px;
+  border-top-color: rgb(229, 230, 233);
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+  border-top-style: solid;
+  border-top-width: 1px;
+}

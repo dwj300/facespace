@@ -1,0 +1,754 @@
+# from django.contrib import admin
+
+# Register your models here.
+# from django.db import models
+
+# Create your models here.
+# from django.test import TestCase
+
+# Create your tests here.
+# from django.shortcuts import render
+
+# Create your views here.
+import models
+from django.contrib import admin
+
+admin.site.register(models.Interest)
+admin.site.register(models.FaceSpaceUser)
+admin.site.register(models.Entity)
+admin.site.register(models.Ad)
+admin.site.register(models.Comment)
+admin.site.register(models.Friendship)
+admin.site.register(models.Like)
+admin.site.register(models.Photo)
+admin.site.register(models.Romance)
+admin.site.register(models.Status)
+from django.forms import ModelForm, Form, DecimalField, ModelChoiceField
+from backend.models import Status, Photo, Interest, Ad
+
+
+class PhotoForm(ModelForm):
+
+    class Meta:
+        model = Photo
+        exclude = ['user']
+
+
+class InterestForm(ModelForm):
+
+    class Meta:
+        model = Interest
+        exclude = ['bid_time', 'bid_price', 'holds', 'will_hold']
+
+
+class AdForm(ModelForm):
+
+    class Meta:
+        model = Ad
+        exclude = ['owner']
+
+
+class BidForm(Form):
+
+    def __init__(self, user, init_price, *args, **kwargs):
+        super(BidForm, self).__init__(*args, **kwargs)
+        self.fields['price'].initial = init_price
+        self.fields['ad'].queryset = Ad.objects.filter(owner=user)
+
+    price = DecimalField(max_digits=9, decimal_places=2)
+    ad = ModelChoiceField(queryset=None,empty_label=None)
+
+
+class StatusForm(ModelForm):
+
+    class Meta:
+        model = Status
+        exclude = ['user']
+from django.db import models
+from django.contrib.auth.models import AbstractUser
+from django.db.models import Q
+
+
+class Interest(models.Model):
+    name = models.CharField(max_length=50)
+    parent = models.ForeignKey('self', related_name="children", null=True, blank=True)
+    bid_time = models.DateTimeField(null=True, blank=True)
+    bid_price = models.DecimalField(max_digits=9, decimal_places=2, null=False, default=0.99)
+    holds = models.ForeignKey('Ad', related_name='holding_ad_slots', null=True, blank=True)
+    will_hold = models.ForeignKey('Ad', related_name='will_hold_ad_slots', null=True, blank=True)
+
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        db_table = 'interests'
+
+
+class Ad(models.Model):
+    name = models.CharField(max_length=20, null=True, blank=True)
+    content_photo = models.ImageField(upload_to="ads")
+    owner = models.ForeignKey('FaceSpaceUser', null=False)
+
+    def __unicode__(self):
+        return str(self.name)
+
+    class Meta:
+        db_table = 'ads'
+
+
+class Comment(models.Model):
+    user = models.ForeignKey('FaceSpaceUser', null=False)
+    entity = models.ForeignKey('Entity')
+    time_created = models.DateTimeField(auto_now_add=True)
+    text = models.TextField()
+
+    class Meta:
+        db_table = 'comments'
+
+
+class Entity(models.Model):
+    time_created = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey('FaceSpaceUser')
+
+    class Meta:
+        verbose_name_plural = 'Entities'
+        db_table = 'entities'
+
+
+class FaceSpaceUser(AbstractUser):
+    birthday = models.DateField()
+    is_male = models.BooleanField(default=True)
+    profile_picture = models.ForeignKey('Photo', null=True, blank=True)
+    relationship_with = models.ManyToManyField(
+        "self", through='Romance', symmetrical=False, related_name='relationship')
+    friends = models.ManyToManyField(
+        "self", through='Friendship', symmetrical=False, related_name='friend')
+    interests = models.ManyToManyField('Interest', blank=True)
+
+    REQUIRED_FIELDS = ['email', 'first_name', 'last_name', 'birthday', 'is_male']
+
+    @property
+    def pending_friendships(self):
+        return Friendship.objects.filter(to_friend=self, confirmed=False)
+
+    @property
+    def pending_friends(self):
+        return map(lambda x: x['from_friend'], Friendship.objects.filter(to_friend=self, confirmed=False).values('from_friend'))
+
+    @property
+    def pending_other_friends(self):
+        return map(lambda x: x['to_friend'], Friendship.objects.filter(from_friend=self, confirmed=False).values('to_friend'))
+
+    @property
+    def confirmed_friends(self):
+        confirmed_friendships = Friendship.objects.filter(Q(to_friend=self) | Q(from_friend=self), confirmed=True)
+        friends = []
+        for friendship in confirmed_friendships:
+            if friendship.to_friend == self:
+                friends.append(friendship.from_friend)
+            else:
+                friends.append(friendship.to_friend)
+        return friends
+
+    @property
+    def pending_romances(self):
+        return Romance.objects.filter(to_partner=self,confirmed=False)
+
+    def __unicode__(self):
+        return self.get_full_name()
+
+    class Meta:
+        db_table = 'facespaceusers'
+
+
+class Friendship(models.Model):
+    from_friend = models.ForeignKey('FaceSpaceUser', related_name='from_friend')
+    to_friend = models.ForeignKey('FaceSpaceUser', related_name='to_friend')
+    since = models.DateField(auto_now_add=True)
+    confirmed = models.BooleanField(default=False)
+
+    def __unicode__(self):
+        if self.confirmed:
+            return " ".join([str(self.from_friend), "<->", str(self.to_friend)])
+        else:
+            return "{0} -> {1}".format(str(self.from_friend), str(self.to_friend))
+
+    class Meta:
+        unique_together = ('from_friend', 'to_friend')
+        db_table = 'friendships'
+
+
+class Like(models.Model):
+    user = models.ForeignKey('FaceSpaceUser')
+    entity = models.ForeignKey('Entity')
+    is_positive = models.BooleanField(default=True)
+
+    class Meta:
+        unique_together = ('user', 'entity')
+        db_table = 'likes'
+
+    def __unicode__(self):
+        return "{0} likes {1}".format(str(self.user), str(self.entity))
+
+
+class Photo(Entity):
+    caption = models.CharField(max_length=140)
+    image = models.ImageField(upload_to="photos")
+
+    def __unicode__(self):
+        return self.caption[:10]
+
+    class Meta:
+        db_table = 'photos'
+
+
+class Romance(models.Model):
+    DATING = 'Dating'
+    ENGAGED = 'Engaged'
+    MARRIED = 'Married'
+    ROMANCE_TYPES = (
+        (DATING, 'Dating'),
+        (ENGAGED, 'Engaged'),
+        (MARRIED, 'Married'),
+    )
+    from_partner = models.ForeignKey('FaceSpaceUser', related_name='from_partner')
+    to_partner = models.ForeignKey('FaceSpaceUser', related_name='to_partner')
+    romance_type = models.CharField(max_length=10, choices=ROMANCE_TYPES, default=DATING)
+    since = models.DateField()
+    until = models.DateField(null=True, blank=True)
+    confirmed = models.BooleanField(default=False)
+
+    def __unicode__(self):
+        return " ".join([str(self.from_partner), "<3", str(self.to_partner)])
+
+    class Meta:
+        db_table = 'romances'
+        unique_together = ('from_partner', 'to_partner', 'since')
+
+
+class Status(Entity):
+    text = models.CharField(max_length=140)
+
+    def __unicode__(self):
+        return self.text[:20]
+
+    class Meta:
+        db_table = 'statuses'
+        verbose_name_plural = 'statuses'
+# from django.test import TestCase
+
+# Create your tests here.
+from django.shortcuts import redirect
+from backend.models import FaceSpaceUser, Friendship, Photo, Ad, Status
+from backend.forms import PhotoForm, StatusForm
+from django.contrib import messages
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login
+from stronghold.decorators import public
+from datetime import date
+
+
+def upload(request):
+    # todo: add validation
+    form = PhotoForm(request.POST, request.FILES)
+
+    if form.is_valid():
+        picture = form.save(commit=False)
+        picture.user = request.user
+        picture.save()
+        request.user.profile_picture = picture
+        request.user.save()
+    return redirect('profile', request.user.username)
+
+
+def post_status(request):
+    form = StatusForm(request.POST)
+
+    if form.is_valid():
+        status = form.save(commit=False)
+        status.user = request.user
+        status.save()
+    return redirect('profile', request.user.username)
+
+
+def upload_ad_pic(request):
+    # @sam: use the form validator
+    ad = Ad(content_photo=request.FILES['photo'], owner=request.user)
+    ad.save()
+    return redirect('profile', request.user.username)
+
+
+def friend(request, other_friend_id):
+    other_friend = FaceSpaceUser.objects.get(id=other_friend_id)
+    Friendship.objects.create(to_friend=other_friend, from_friend=request.user)
+    messages.success(request, "Sent friend request to {0}.".format(other_friend.get_full_name()))
+    return redirect('profile', other_friend.username)
+
+def romance_up(request, other_partner_id):
+    other_partner = FaceSpaceUser.objects.get(id=other_partner_id)
+    Romance.objects.create(to_friend=other_partner, from_friend=request.user)
+    messages.success(request, "Sent romance request to {0}.".format(other_partner.get_full_name()))
+    return redirect('profile', other_partner.username)
+
+def romance_down(request, other_partner_id):
+    return None
+
+def confirm(request, friendship_id):
+    friendship = Friendship.objects.get(id=friendship_id)
+    friendship.confirmed = True
+    friendship.save()
+    messages.success(request, "Confirmed friendship with {0}".format(
+        friendship.from_friend.get_full_name()))
+    return redirect('profile', request.user.username)
+
+def confirm_romance(request, romance_id):
+    romance = Romance.objects.get(id=romance_id)
+    romance.confirmed = True
+    romance.save()
+    messages.success(request, "Confirmed romance with {0}".format(
+        romance.from_partner.get_full_name()))
+    return redirect('profile', request.user.username)
+
+
+def confirm_username(request, username):
+    friendship = Friendship.objects.get(to_friend=request.user, from_friend__username=username)
+    friendship.confirmed = True
+    friendship.save()
+    messages.success(request, "Confirmed friendship with {0}".format(
+        friendship.from_friend.get_full_name()))
+    return redirect('profile', request.user.username)
+
+
+@public
+def register(request):
+    # todo: add form validation
+    birthday = date(year=int(request.POST['birthday_year']),
+                    month=int(request.POST['birthday_month']),
+                    day=int(request.POST['birthday_day']))
+    user = FaceSpaceUser.objects.create_user(username=request.POST['username'],
+                                             password=request.POST['password'],
+                                             email=request.POST['email'],
+                                             birthday=birthday,
+                                             is_male=bool(int(request.POST['sex'])),
+                                             first_name=request.POST['firstname'],
+                                             last_name=request.POST['lastname'])
+
+    auth_user = authenticate(username=request.POST['username'], password=request.POST['password'])
+    login(request, auth_user)
+    return redirect('index')
+"""
+Django settings for facespace project.
+
+For more information on this file, see
+https://docs.djangoproject.com/en/1.7/topics/settings/
+
+For the full list of settings and their values, see
+https://docs.djangoproject.com/en/1.7/ref/settings/
+"""
+
+# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+import os
+from django.core.urlresolvers import reverse_lazy
+
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+
+
+# Quick-start development settings - unsuitable for production
+# See https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/
+
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = '^f-3^etck2%uf^kqhr)@bgj_pp+ekm2+(cz+ay&av41y22&fu@'
+
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = True
+THUMBNAIL_DEBUG = True
+TEMPLATE_DEBUG = True
+
+ALLOWED_HOSTS = []
+
+
+# Application definition
+
+INSTALLED_APPS = (
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'debug_toolbar',
+    'ws4redis',
+    'sorl.thumbnail',
+    'stronghold',
+    'backend',
+    'frontend',
+    'api',
+)
+
+MIDDLEWARE_CLASSES = (
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'stronghold.middleware.LoginRequiredMiddleware',
+)
+
+TEMPLATE_CONTEXT_PROCESSORS = (
+    'django.contrib.auth.context_processors.auth',
+    'django.core.context_processors.request',
+    'django.core.context_processors.static',
+    'django.core.context_processors.debug',
+    'django.core.context_processors.i18n',
+    'django.core.context_processors.media',
+    'django.core.context_processors.static',
+    'django.core.context_processors.tz',
+    'django.contrib.messages.context_processors.messages',
+    'ws4redis.context_processors.default')
+
+
+ROOT_URLCONF = 'facespace.urls'
+
+WSGI_APPLICATION = 'facespace.wsgi.application'
+
+
+# Database
+# https://docs.djangoproject.com/en/1.7/ref/settings/#databases
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'facespace',
+        'USER': 'root',
+        'PASSWORD': '',
+        'HOST': 'localhost',
+    }
+}
+
+# Internationalization
+# https://docs.djangoproject.com/en/1.7/topics/i18n/
+
+LANGUAGE_CODE = 'en-us'
+
+TIME_ZONE = 'UTC'
+
+USE_I18N = True
+
+USE_L10N = True
+
+USE_TZ = True
+
+
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/1.7/howto/static-files/
+
+STATIC_URL = '/static/'
+
+AUTH_USER_MODEL = 'backend.FaceSpaceUser'
+
+LOGIN_URL = reverse_lazy('login')
+LOGIN_REDIRECT_URL = reverse_lazy('index')
+LOGOUT_URL = reverse_lazy('logout')
+
+ENV_PATH = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+MEDIA_ROOT = os.path.join(ENV_PATH, 'media/')
+MEDIA_URL = "http://127.0.0.1:8000/media/"
+
+STRONGHOLD_PUBLIC_URLS = ('/media/', '/static/')
+
+# Chat stuff
+
+WEBSOCKET_URL = '/ws/'
+WSGI_APPLICATION = 'ws4redis.django_runserver.application'
+WS4REDIS_PREFIX = 'ws'
+
+# Redis sessions:
+SESSION_ENGINE = 'redis_sessions.session'
+SESSION_REDIS_PREFIX = 'session'
+
+# List of callables that know how to import templates from various sources.
+TEMPLATE_LOADERS = (
+    'django.template.loaders.app_directories.Loader',
+)
+from django.conf.urls import patterns, include, url
+from django.contrib import admin
+from django.views.static import serve
+from frontend.views import UserChatView
+import settings
+
+urlpatterns = patterns('',
+    url(r'^$', 'frontend.views.index', name='index'),
+    url(r'^about/$', 'frontend.views.about', name='about'),
+    url(r'^admin/', include(admin.site.urls)),
+    url(r'^api/', include('api.urls', namespace='api', app_name='api')),
+    url(r'^bid/(\d+)/$', 'frontend.views.bid', name='bid'),
+    url(r'^interest/(\d+)/$', 'frontend.views.interest', name='interest'),
+    url(r'^create_interest/$', 'frontend.views.create_interest', name='create_interest'),
+    url(r'^create_ad/$', 'frontend.views.create_ad', name='create_ad'),
+    url(r'^profile/([a-zA-Z0-9.]+)/$', 'frontend.views.profile', name='profile'),
+    url(r'^login/$', 'django.contrib.auth.views.login', {'template_name': 'login.html'}, name='login'),
+    url(r'^logout/$', 'django.contrib.auth.views.logout', {'next_page': '/'}, name='logout'),
+    url(r'^search/$', 'frontend.views.search', name='search'),
+    url(r'^post_status/$', 'backend.views.post_status', name="post_status"),
+    url(r'^upload/$', 'backend.views.upload', name="upload"),
+    url(r'^upload_ad_pic/$', 'backend.views.upload', name="upload_ad_pic"),
+    url(r'^friend/([0-9]+)/$', 'backend.views.friend', name="friend"),
+    url(r'^romance_up/([0-9]+)/$', 'backend.views.romance_up', name="romance_up"),
+    url(r'^romance_down/([0-9]+)/$', 'backend.views.romance_down', name="romance_down"),
+    url(r'^confirm/([0-9]+)/$', 'backend.views.confirm', name="confirm"),
+    url(r'^confirm_romance/([0-9]+)/$', 'backend.views.confirm_romance', name="confirm_romance"),
+    url(r'^confirm_username/([a-zA-Z0-9.]+)/$', 'backend.views.confirm_username', name="confirm_username"),
+    url(r'^register/$', 'backend.views.register', name="register"),
+    url(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
+    url(r'^userchat/$', UserChatView.as_view(), name='user_chat'),
+)
+"""
+WSGI config for facespace project.
+
+It exposes the WSGI callable as a module-level variable named ``application``.
+
+For more information on this file, see
+https://docs.djangoproject.com/en/1.7/howto/deployment/wsgi/
+"""
+
+import os
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "facespace.settings")
+
+from django.core.wsgi import get_wsgi_application
+application = get_wsgi_application()
+# from django.contrib import admin
+
+# Register your models here.
+# from django.db import models
+
+# Create your models here.
+# from django.test import TestCase
+
+# Create your tests here.
+from django.shortcuts import render, redirect
+from stronghold.decorators import public
+from backend.models import Ad, FaceSpaceUser, Status
+from backend.models import Friendship, Interest, Romance
+from backend.forms import PhotoForm, InterestForm, AdForm, BidForm, StatusForm
+from django.db.models import Q
+from django.core.exceptions import ObjectDoesNotExist
+from datetime import datetime
+
+
+from django.views.generic.base import TemplateView
+from django.views.decorators.csrf import csrf_exempt
+from ws4redis.publisher import RedisPublisher
+from ws4redis.redis_store import RedisMessage
+from django.http import HttpResponse
+
+
+@public
+def index(request):
+    if request.user.is_authenticated():
+        return newsfeed(request)
+    else:
+        return render(request,
+                      'index.html',
+                      {'day_list': range(1, 32, 1), 'year_list': range(2015, 1900, -1)})
+
+
+def about(request):
+    return render(request, 'about.html')
+
+
+def newsfeed(request):
+    params = {}
+
+    # get stuff
+    # todo: filter only friends' content
+    friends = request.user.confirmed_friends
+    friends.append(request.user)
+    statuses = Status.objects.all().filter(user__in=friends).order_by('-time_created')
+    # likes = Like.objects.all()
+    # comments = Comment.objects.all()
+    # friendships = Friendship.objects.all()
+    # photos = Photo.objects.all()
+    # romance = Romance.objects.all()
+
+    params['statuses'] = statuses
+    params['user'] = request.user
+
+
+
+    return render(request, 'home.html', params)
+
+
+def profile(request, username):
+    params = {}
+    try:
+        other_user = FaceSpaceUser.objects.get(username=username)
+        params['facespaceuser'] = other_user
+    except ObjectDoesNotExist:
+        # user doesnt exist
+        # redirect to homepage
+        pass
+
+    if other_user == request.user:
+        # getting your own profile
+        # confirmed_friends = Friendship.objects.filter(Q(to_friend=request.user)|Q(from_friend=request.user), confirmed=True)
+        # params['confirmed_friends'] = list(confirmed_friends)
+        params['statuses'] = Status.objects.filter(user=request.user)
+        params['photo_form'] = PhotoForm()
+        params['status_form'] = StatusForm()
+        return render(request, 'profile.html', params)
+    elif Friendship.objects.filter((Q(to_friend=request.user) & Q(from_friend=other_user)) |
+                                   (Q(from_friend=request.user) & Q(to_friend=other_user)),
+                                   confirmed=True).count() == 1:
+        # getting a friend's profile
+        params['statuses'] = Status.objects.filter(user=other_user)
+        try:
+            romance = Romance.objects.get((Q(to_partner=request.user) & Q(from_partner=other_user)) | (
+            Q(from_partner=request.user) & Q(to_partner=other_user)))
+            if romance.romance_type == Romance.DATING:
+                params['next_romance'] = 'Propose'
+                params['next_breakup'] = 'Breakup'
+            elif romance.romance_type == Romance.ENGAGED:
+                params['next_romance'] = 'Get Married!'
+                params['next_breakup'] = 'Break it off'
+            else:
+                params['next_romance'] = ''
+                params['next_breakup'] = 'Get divorced!'
+        except:
+            params['next_romance'] = 'Go Steady'
+            params['next_breakup'] = ''
+        return render(request, 'profile_friend.html', params)
+    else:
+        # getting someone else's profile
+        try:
+            friendship = Friendship.objects.get((Q(to_friend=request.user) & Q(from_friend=other_user)) | (
+                Q(from_friend=request.user) & Q(to_friend=other_user)), confirmed=False)
+            params['friendship'] = friendship
+        except:
+            pass
+        return render(request, 'profile_other.html', params)
+
+
+def bid(request, interest_id):
+
+    interest = Interest.objects.get(id=interest_id)
+
+    if request.POST:
+        price = float(request.POST.get('price'))
+        ad_id = request.POST.get('ad')
+        if interest.bid_price < price:
+            interest.will_hold = Ad.objects.get(id=ad_id)
+            interest.bid_price = price
+            interest.bid_time = datetime.now()
+            interest.save()
+            return redirect('interest', interest_id)
+
+    form = BidForm(user=request.user, init_price=interest.bid_price)
+    params = {'form': form, 'interest': interest}
+    return render(request, 'bid.html', params)
+
+
+def create_ad(request):
+    if request.POST:
+        form = AdForm(request.POST, request.FILES)
+        if form.is_valid():
+            ad = form.save(commit=False)
+            ad.owner = request.user
+            ad.save()
+            return redirect('interest', 1)
+        else:
+            return redirect('create_ad')
+    else:
+        form = AdForm()
+        params = {'form': form}
+        return render(request, 'create_ad.html', params)
+
+
+def create_interest(request):
+    if request.POST:
+        form = InterestForm(request.POST)
+        if form.is_valid():
+            interest = form.save(commit=True)
+            return redirect('interest', interest.id)
+        else:
+            return redirect('create_interest')
+    else:
+        form = InterestForm()
+        params = {'form': form}
+        return render(request, 'create_interest.html', params)
+
+
+def interest(request, interest_id):
+    params = {}
+    try:
+        interest = Interest.objects.get(id=interest_id)
+
+        child_interests = Interest.objects.filter(parent__id=interest_id)
+
+        params['child_interests'] = child_interests
+
+        if not interest.holds:
+            print "asdfadsfadfs"
+            ad = Ad.objects.get(id=1)
+            print ad.name
+            interest.holds = ad
+            interest.save()
+
+        params['interest'] = interest
+    except:
+        pass
+
+    return render(request, 'interest.html', params)
+
+
+def search(request):
+    #todo: interests search
+    params = {}
+    query = request.GET['query']
+    terms = query.split(' ')
+    people = FaceSpaceUser.objects.all()
+    posts = Status.objects.all()
+    interests = Interest.objects.all()
+    for term in terms:
+        people = people.filter(Q(first_name__icontains=term) | Q(last_name__icontains=term))
+        posts = posts.filter(text__icontains=term)
+        interests = interests.filter(name__icontains=term)
+
+    params['user_results'] = people
+    params['status_results'] = posts
+#    params['interest_results'] = interests
+#
+
+    params['keyword'] = query
+
+    return render(request, 'search.html', params)
+
+
+class UserChatView(TemplateView):
+    template_name = 'user_chat.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(UserChatView, self).get_context_data(**kwargs)
+        context.update(users=FaceSpaceUser.objects.all())
+        return context
+
+    @csrf_exempt
+    def dispatch(self, *args, **kwargs):
+        return super(UserChatView, self).dispatch(*args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        redis_publisher = RedisPublisher(facility='foobar', users=[request.POST.get('user')])
+        message = RedisMessage(request.POST.get('message'))
+        redis_publisher.publish_message(message)
+        return HttpResponse('OK')
+#!/usr/bin/env python
+import os
+import sys
+
+if __name__ == "__main__":
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "facespace.settings")
+
+    from django.core.management import execute_from_command_line
+
+    execute_from_command_line(sys.argv)

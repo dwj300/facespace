@@ -1,0 +1,1068 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row">
+  <div class="col-sm-8 col-sm-offset-2">
+    <h1>the facespace.</h1>
+    <p>Created by team DB2</p>
+    <strong>Douglas Jordan</strong><br>
+    <strong>Matthew Rozak</strong><br>
+    <strong>Sam Galambos</strong><br>
+    <strong>Yunzhen Yang</strong><br>
+  </div>
+</div>
+
+{% endblock %}{% load staticfiles %}
+{% load thumbnail %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>the facespace</title>
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/index.css' %}" rel="stylesheet">
+    <link href="{% static 'css/base.css' %}" rel="stylesheet">
+    <link href="{% static 'css/chat.css' %}" rel="stylesheet">
+    <link rel="shortcut icon" href="{% static 'img/favicon.ico' %}" />
+    {% block css %}{% endblock %}
+  </head>
+  <body>
+    <nav class="navbar navbar-inverse navbar-fixed-top navbar-xs">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="{% url 'index' %}"><div class="color_me">facespace</div></a>
+        </div>
+        <div class="navbar-collapse collapse">
+          <form action="{% url 'search' %}" method="get" class="navbar-form pull-right">
+            <div class="input-append">
+              <input class="span4 search_box" id="appendedInputButton" name="query" type="text" placeholder="Search...">
+              <!--<button class="btn" type="button">Search</button>-->
+              <input class="search_button" type="submit" value="Search">
+            </div>
+          </form>
+          <ul class="nav navbar-nav navbar-right">
+            {% thumbnail user.profile_picture.image "30x30" crop="center" as im %}
+            <li><img class="mini_prof" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}"></li>
+            {% endthumbnail %}
+            <li><a href="{% url 'profile' user.username %}"><div class="color_me">{{ user.first_name }}</div></a></li>
+            <li><a href="{% url 'create_ad' %}"><div class="color_me">Create Ad</div></a></li>
+            <li><a href="{% url 'interest' 1 %}"><div class="color_me">Interests</div></a></li>
+            <li><a href="{% url 'create_interest' %}"><div class="color_me">Create Interest</div></a></li>
+            <li><a href="{% url 'about' %}"><div class="color_me">About</div></a></li>
+            <li><a href="{% url 'logout' %}"><div class="color_me">Logout</div></a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-10">
+          {% block content %}{% endblock %}
+        </div>
+        <div class="col-lg-2 chat-sidebar">
+            <h5>facespace chat</h5>    
+            {% for friend in user.confirmed_friends %}
+            <div class="sidebar-name">
+            {% thumbnail friend.profile_picture.image "30x30" crop="center" as im %}
+            <a id="thumb_{{ friend.username }}" href="javascript:register_popup('{{ friend.username }}', '{{ friend.get_full_name }}');">
+              <img width="{{ im.width }}" height="{{ im.height }}" src="{{ im.url }}" />
+              <span>{{ friend.get_full_name }}</span>
+            </a>
+            {% endthumbnail %}
+            </div>
+            {% endfor %}
+        </div>
+      </div>
+    </div>
+    <script src="{% static 'js/jquery-2.1.3.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/chat.js' %}"></script>
+    <script src="{% static 'js/ws4redis.js' %}" type="text/javascript"></script>
+    <script type="text/javascript">
+    function send_message(textbox) {
+            user = $(textbox).parent().parent().parent().attr('id')
+            message_text = textbox.value;
+            data = {
+              user: "{{ user.username }}",
+              full_name: "{{ user.get_full_name }}",
+              message: message_text
+            }
+            
+
+            $.post('{% url "user_chat" %}', {
+                        user: user,
+                        message: JSON.stringify(data)
+                    });
+            $(textbox).parent().parent().parent().find("#convo").append('<div class="from_chat_box">'+data.full_name + ": " + message_text+'</div>');
+            $(textbox).val('');
+    }
+
+    function receiveMessage(msg) {
+            data = JSON.parse(msg);
+            //$("#thumb_" + data.user).trigger("click");
+            register_popup(data.user, data.full_name);
+            console.log(data.message);
+            
+            $("#"+data.user).children(".popup-messages").children("#convo").append(data.full_name + ": " + data.message+"<br>")
+            //billboard.append('<br/>' + msg);
+            //billboard.scrollTop(billboard.scrollTop() + 25);
+    }
+
+    jQuery(document).ready(function($) {
+        var ws4redis = WS4Redis({
+            uri: '{{ WEBSOCKET_URI }}foobar?subscribe-user',
+            receive_message: receiveMessage,
+            heartbeat_msg: {{ WS4REDIS_HEARTBEAT }}
+        });
+        /*
+        $("#text_message").keydown(function(event) {
+            if (event.keyCode === 13) {
+                event.preventDefault();
+                sendMessage();
+            }
+        });
+
+        $('#send_message_button').click(sendMessage);*/
+
+        // send message to the server using Ajax
+        
+
+        // receive a message though the Websocket from the server
+
+
+        //function clickChatPerson() {
+            //alert("person_clicked");
+        //    $('#send_message_button').html("blah");
+        //}
+        $('a.select_person').click(function() {
+          $('#send_message_button').html("Send message to " + this.text);
+          $('#selected_user_id').html(this.id);
+        }); 
+    });
+  </script>
+  </body>
+</html>{% extends "base.html" %}
+{% load thumbnail %}
+{% block content %}
+<div class="index">
+    {{form.errors}}
+    <form method="post" action="{% url 'bid' interest.id %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form }}
+        <input type="submit" value="Upload">
+    </form>
+</div>
+{% endblock %}{% load tutorial_tags %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Django Websocket Redis</title>
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <header class="navbar navbar-static-top navbar-inverse">
+        <div class="container">
+            <div class="navbar-header">
+                <button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".bs-navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+            </div>
+            <nav class="collapse navbar-collapse bs-navbar-collapse" role="navigation">
+                <ul class="nav navbar-nav">
+
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="dropdown" style="margin-right: 12em;">
+                    {% if request.user.is_authenticated %}
+                        <a class="dropdown-toggle" href="#" data-toggle="dropdown">{{ request.user.get_full_name }} <span class="caret"></span></a>
+                        <div class="dropdown-menu" style="padding:1em;">
+                            <form class="form" action="{% url 'logout' %}" method="post">{% csrf_token %}
+                                <input type="hidden" name="next" value="{{ request.get_full_path }}" />
+                                <input class="btn btn-success btn-block" type="submit" value="Logout">
+                            </form>
+                        </div>
+                    {% else %}
+                        <a class="dropdown-toggle" href="#" data-toggle="dropdown">Login <span class="caret"></span></a>
+                        <div class="dropdown-menu" style="padding:1em;">
+                            <p class="help-block">Login as <em>john</em> or <em>mary</em> using password <em>secret</em>.</p>
+                            <form class="form" action="{% url 'login' %}" method="post">{% csrf_token %}
+                                <input type="hidden" name="next" value="{{ request.get_full_path }}" />
+                                <div class="form-group">
+                                    <input class="form-control" placeholder="Username" name="username" type="text">
+                                </div>
+                                <div class="form-group">
+                                    <input class="form-control" placeholder="Password" name="password" type="password" value="">
+                                </div>
+                                <input class="btn btn-success btn-block" type="submit" value="Login">
+                            </form>
+                        </div>
+                    {% endif %}
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        {% block main_content %}
+        <div class="row">
+            <div class="col-xs-12">
+                <h1>Simple chat {% block "title" %}{% endblock %}</h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-md-11 col-lg-10">
+                {% block introduction %}{% endblock introduction %}
+                <pre id="billboard" style="overflow-y: auto; height: 24em; margin-top: 1em;"></pre>
+            </div>
+        </div>
+        <div class="row">
+            <div "form-inline">
+                <div class="form-group col-xs-12 col-sm-7">
+                    <input class="form-control" type="text" id="text_message" />
+                </div>
+                <div class="form-group col-xs-12 col-sm-5 col-md-4">
+                    {% block control_panel %}
+                    <button class="btn btn-primary" id="send_message">Send message</button>
+                    {% endblock control_panel %}
+                </div>
+            </div>
+        </div>
+        {% endblock main_content %}
+    </div>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js" type="text/javascript"></script>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js" type="text/javascript"></script>
+    <script src="{{ STATIC_URL }}js/ws4redis.js" type="text/javascript"></script>
+    {% block script_panel %}{% endblock %}
+    <a href="https://github.com/jrief/django-websocket-redis" class="hidden-xs">
+        <img style="position: absolute; top: 0; right: 0; border: 0; z-index: 1001;" src="https://camo.githubusercontent.com/365986a132ccd6a44c23a9169022c0b5c890c387/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png">
+    </a>
+</body>
+
+</html>{% extends "base.html" %}
+{% load thumbnail %}
+{% block content %}
+<div class="index">
+    {{form.errors}}
+    <form method="post" action="{% url 'create_ad' %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form }}
+        <input type="submit" value="Upload">
+    </form>
+</div>
+{% endblock %}{% extends "base.html" %}
+{% load thumbnail %}
+{% block content %}
+<div class="index">
+    <form method="post" action="{% url 'create_interest' %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form }}
+        <input type="submit" value="Upload">
+    </form>
+</div>
+{% endblock %}{% extends "base.html" %}
+
+{% block content %}
+{% load thumbnail %}
+<style>
+
+body {
+  background: rgb(233, 234, 237);
+}
+
+.home {
+  margin-top:20px;
+}
+
+.prof_link {
+  font-size: 12px;
+  font-weight: bold;
+  color: black;
+}
+
+.post {
+  margin-bottom: 10px;
+  -moz-border-radius: 3px;
+  border-radius:      3px;
+  border-bottom-color: rgb(208, 209, 213);
+  border-bottom-left-radius: 3px;
+  border-bottom-right-radius: 3px;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  border-image-outset: 0px;
+  border-image-repeat: stretch;
+  border-image-slice: 100%;
+  border-image-source: none;
+  border-image-width: 1;
+  border-left-color: rgb(223, 224, 228);
+  border-left-style: solid;
+  border-left-width: 1px;
+  border-right-color: rgb(223, 224, 228);
+  border-right-style: solid;
+  border-right-width: 1px;
+  border-top-color: rgb(229, 230, 233);
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+  border-top-style: solid;
+  border-top-width: 1px;
+}
+
+.upper {
+  background: rgb(255, 255, 255);
+  padding: 10px;
+  border-bottom-color: rgb(225, 226, 227);
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+}
+
+.meta {
+  color: rgb(20, 24, 35);
+  background-color: rgb(246, 247, 248);
+  font-family: helvetica, arial, 'lucida grande', sans-serif;
+  font-size: 12px;
+  line-height: 16.0799999237061px;
+  margin-bottom: 0px;
+  margin-left: 0px;
+  margin-right: 0px;
+  margin-top: 0px;
+  padding-bottom: 0px;
+  padding-left: 0px;
+  padding-right: 0px;
+  padding-top: 0px;
+  text-align: left;
+  word-wrap: break-word;
+}
+
+.likes {
+  
+
+  border-bottom-color: rgb(225, 226, 227);
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  color: rgb(20, 24, 35);
+  font-family: helvetica, arial, 'lucida grande', sans-serif;
+  font-size: 12px;
+
+  line-height: 16.0799999237061px;
+  margin-bottom: 0px;
+  margin-left: 12px;
+  margin-right: 12px;
+  margin-top: 0px;
+  padding-bottom: 7px;
+  padding-left: 0px;
+  padding-right: 0px;
+  padding-top: 9px;
+  text-align: left;
+  word-wrap: break-word;
+}
+
+.comments {
+  border-bottom-left-radius: 2px;
+  border-bottom-right-radius: 2px;
+  border-top-left-radius: 0px;
+  border-top-right-radius: 0px;
+  color: rgb(20, 24, 35);
+  font-family: helvetica, arial, 'lucida grande', sans-serif;
+  font-size: 12px;
+  line-height: 16.0799999237061px;
+  margin-bottom: 0px;
+  margin-left: 12px;
+  margin-right: 12px;
+  margin-top: 0px;
+  padding-bottom: 8px;
+  padding-left: 0px;
+  padding-right: 0px;
+  padding-top: 2px;
+  text-align: left;
+  word-wrap: break-word;
+}
+
+.mini_prof_pic {
+  margin-right:5px;
+  margin-top:5px;
+  vertical-align: top;
+}
+
+.post a {
+  color:rgb(59, 89, 152);
+  font-weight: bold;
+}
+
+.post .body {
+  margin:10px;
+  margin-left:0px;
+  margin-bottom:0px;
+}
+
+.post .body {
+  font-family: helvetica, arial, 'lucida grande', sans-serif;
+}
+
+
+</style>
+
+<div class="home row">
+  <div class="left-margin col-xs-2"></div>
+
+  <div class="sidebar col-xs-2">
+    <a href="{% url 'profile' user.username %}">
+      {% thumbnail user.profile_picture.image "40x40" crop="center" as im %}
+        <img class="mini_prof_pic" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
+      {% endthumbnail %}
+    </a>
+    <a class="prof_link" href="{% url 'profile' user.username %}">{{ user }}</a>
+  </div>
+
+  <div class="feed col-xs-8">
+    {% for s in statuses %}
+    <div class="post">
+      <div class="upper">
+        <div class="header">
+          <a href="{% url 'profile' s.user.username %}">
+            {% thumbnail s.user.profile_picture.image "40x40" crop="center" as im %}
+              <img class="mini_prof_pic" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
+            {% endthumbnail %}
+          </a>
+          <a href="{% url 'profile' s.user.username %}">{{ s.user }}</a>
+        </div>
+        <div class="body">
+          <div class="text">{{ s.text }}</div>
+          <div class="lcs"><a>Like</a> · <a>Comment</a></div>
+        </div>
+      </div>
+      <div class="meta">
+        <div class="likes">
+          <span class="glyphicon glyphicon-thumbs-up"></span> 5 people like this.
+        </div>
+        <div class="comments">
+          <div class="comment_pic">
+            {% thumbnail s.user.profile_picture.image "40x40" crop="center" as im %}
+              <img class="mini_prof_pic" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}"></div>
+            {% endthumbnail %}
+          <div class="comment_box"></div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="right-margin col-xs-2"></div>
+</div>
+{% endblock %}{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en" id="facebook" class="no_js">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="referrer" content="default" id="meta_referrer">
+  <title id="pageTitle">Welcome to Facespace - Log In, Sign Up or Learn More</title>
+  <meta property="og:site_name" content="Facespace">
+  <meta property="og:locale" content="en_US">
+  <meta name="description" content="Facespace is a social utility that connects people with friends and others who work, study and live around them. People use facespace to keep up with...">
+  <meta name="robots" content="noodp,noydir">
+  <link rel="shortcut icon" href="{% static 'img/favicon.ico' %}">
+  <link type="text/css" rel="stylesheet" href="{% static 'css/index1.css' %}" >
+  <link type="text/css" rel="stylesheet" href="{% static 'css/index2.css' %}" >
+  <link type="text/css" rel="stylesheet" href="{% static 'css/index3.css' %}" >
+</head>
+
+<body class="fbIndex UIPage_LoggedOut _2gsg webkit safari mac x1 Locale_en_US" dir="ltr">
+  <div class="_li">
+    <div id="pagelet_bluebar" role="banner" data-click="bluebar" data-click-phase="0">
+      <div id="blueBarDOMInspector" class="_21mm">
+        <div id="blueBarNAXAnchor" class="_4f7n _xxp">
+          <div>
+            <div class="loggedout_menubar_container">
+              <div class="clearfix loggedout_menubar">
+                <div class="lfloat _ohe">
+                  <h1>
+                  <a href="{% url 'index' %}" title="Go to facespace Home">
+                  <i class="fb_logo img sp_Z_xw_7FDtNv sx_b6c073">
+                  <u>Facespace logo</u></i></a></h1></div>
+                <div class="menu_login_container rfloat _ohf">
+                  <form id="login_form" action="{% url 'django.contrib.auth.views.login' %}" method="post" >
+                    {% csrf_token %}
+                    <table cellspacing="0" role="presentation">
+                      <tbody>
+                        <tr>
+                          <td class="html7magic">
+                            <label for="email">Username</label>
+                          </td>
+                          <td class="html7magic">
+                            <label for="pass">Password</label>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <input type="text" class="inputtext" name="username" id="id_username" placeholder="Username" required autofocus tabindex="1" >
+                          </td>
+                          <td>
+                            <input type="password" class="inputtext" name="password" id="id_password" placeholder="Password" required tabindex="2" >
+                          </td>
+                          <td>
+                            <label class="uiButton uiButtonConfirm" id="loginbutton" for="u_0_n">
+                              <input value="Log In" tabindex="4" type="submit" id="u_0_n">
+                            </label>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td class="login_form_label_field">
+                            <div>
+                              <div class="uiInputLabel clearfix uiInputLabelLegacy">
+                                
+                              </div>
+                              <input type="hidden" name="default_persistent" value="0">
+                            </div>
+                          </td>
+                          <!-- todo: this -->
+                          <td class="login_form_label_field"><a href="https://www.facebook.com/recover/initiate">Forgot your password?</a></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="globalContainer" class="uiContextualLayerParent">
+      <div class="fb_content clearfix " id="content" role="main">
+        <div>
+          <div class="_50dz">
+            <style type="text/css">
+            .product_desc {
+              width: 440px;
+            }
+            </style>
+            <div style="background: #edf0f5">
+              <div class="pvl" style="width: 980px; margin: 0 auto">
+                <div class="_7d _6_ _76">
+                  <h2 class="inlineBlock _3ma _6n _6s _6v" style="padding: 42px 0 24px; font-size: 28px; line-height: 36px"> Connect with friends and the<br>world around you on Facespace. </h2>
+                  <div class="mtl pbm">
+                    <div class="_6a _6b mrl" style="text-align: center; width: 55px"><img class="img" src="{% static 'img/newsfeed.png' %}" alt="" style="vertical-align: middle"></div>
+                    <div class="_6a _6b product_desc"><span class="mtl _3ma _6p _6s _6v"> See photos and updates </span><span class="mlm _6q _6t _mf"> from friends in News Feed. </span></div>
+                  </div>
+                  <div class="mtl pbm">
+                    <div class="_6a _6b mrl" style="text-align: center; width: 55px">
+                      <img class="img" src="{% static 'img/share.png' %}" alt="" style="vertical-align: middle">
+                    </div>
+                    <div class="_6a _6b product_desc">
+                      <span class="mtl _3ma _6p _6s _6v"> Share what's new </span>
+                      <span class="mlm _6q _6t _mf"> in your life on your Timeline. </span>
+                    </div>
+                  </div>
+                  <div class="mtl pbm">
+                    <div class="_6a _6b mrl" style="text-align: center; width: 55px">
+                      <img class="img" src="{% static 'img/graph.png' %}" alt="" style="vertical-align: middle"></div>
+                    <div class="_6a _6b product_desc">
+                      <span class="mtl _3ma _6p _6s _6v"> Find more </span>
+                      <span class="mlm _6q _6t _mf"> of what you're looking for with Graph Search. </span>
+                    </div>
+                  </div>
+                <!-- The following line MUST be on the same line... go figure -->
+                </div><div class="_6_ _74">
+                  <h2 class="mbs _3ma _6n _6s _6v" style="font-size: 36px">Sign Up</h2>
+                  <div class="mbl _3m9 _6o _6s _mf">It’s free and always will be.</div>
+                  <div>
+                    <div>
+                      <div class="_58mf">
+                        <div id="reg_box" class="registration_redesign">
+                          <form method="post" id="reg" name="reg" action="{% url 'register' %}" >
+                            {% csrf_token %}
+                            <div id="reg_form_box" class="large_form">
+                              <div class="clearfix _58mh">
+                                <div class="mbm _3-90 lfloat _ohe">
+                                  <div class="_5dbb" id="u_0_0">
+                                    <input type="text" class="inputtext _58mg _5dba _2ph-" data-type="text" name="firstname" aria-required="1" placeholder="First name" id="u_0_1" aria-label="First name"><i class="_5dbc img sp_Z_xw_7FDtNv sx_33ab79"></i><i class="_5dbd img sp_Z_xw_7FDtNv sx_826745"></i></div>
+                                </div>
+                                <div class="mbm rfloat _ohf">
+                                  <div class="_5dbb" id="u_0_2">
+                                    <input type="text" class="inputtext _58mg _5dba _2ph-" data-type="text" name="lastname" aria-required="1" placeholder="Last name" id="u_0_3" aria-label="Last name"><i class="_5dbc img sp_Z_xw_7FDtNv sx_33ab79"></i><i class="_5dbd img sp_Z_xw_7FDtNv sx_826745"></i></div>
+                                </div>
+                              </div>
+                              <div class="mbm">
+                                <div class="_5dbb" id="u_0_4">
+                                  <input type="text" class="inputtext _58mg _5dba _2ph-" data-type="text" name="username" aria-required="1" placeholder="Username" id="u_0_4" aria-label="Username"><i class="_5dbc img sp_Z_xw_7FDtNv sx_33ab79"></i><i class="_5dbd img sp_Z_xw_7FDtNv sx_826745"></i></div>
+                              </div>
+                              <div class="mbm">
+                                <div class="_5dbb" id="u_0_4">
+                                  <input type="text" class="inputtext _58mg _5dba _2ph-" data-type="text" name="email" aria-required="1" placeholder="Email" id="u_0_5" aria-label="Email or mobile number"><i class="_5dbc img sp_Z_xw_7FDtNv sx_33ab79"></i><i class="_5dbd img sp_Z_xw_7FDtNv sx_826745"></i></div>
+                              </div>
+                              <div class="mbm" id="u_0_6">
+                                <div class="_5dbb" id="u_0_7">
+                                  <input type="text" class="inputtext _58mg _5dba _2ph-" data-type="text" name="email_conf" aria-required="1" placeholder="Re-enter email" id="u_0_8" aria-label="Re-enter email or mobile number"><i class="_5dbc img sp_Z_xw_7FDtNv sx_33ab79"></i><i class="_5dbd img sp_Z_xw_7FDtNv sx_826745"></i></div>
+                              </div>
+                              <div class="mbm">
+                                <div class="_5dbb" id="u_0_9">
+                                  <input type="password" class="inputtext _58mg _5dba _2ph-" data-type="text" name="password" aria-required="1" placeholder="New password" id="u_0_a" aria-label="New password"><i class="_5dbc img sp_Z_xw_7FDtNv sx_33ab79"></i><i class="_5dbd img sp_Z_xw_7FDtNv sx_826745"></i></div>
+                              </div>
+                              <div class="_58mq _5dbb" id="u_0_b">
+                                <div class="mtm mbs _58mr">Birthday</div>
+                                <div class="_5k_5">
+                                <span class="_5k_4" data-type="selectors" data-name="birthday_wrapper" id="u_0_c">
+                                <span>
+                                <select aria-label="Month" name="birthday_month" id="month" title="Month" class="_5dba">
+                                  <option value="0" selected="1">Month</option>
+                                  <option value="1">Jan</option>
+                                  <option value="2">Feb</option>
+                                  <option value="3">Mar</option>
+                                  <option value="4">Apr</option>
+                                  <option value="5">May</option>
+                                  <option value="6">Jun</option>
+                                  <option value="7">Jul</option>
+                                  <option value="8">Aug</option>
+                                  <option value="9">Sep</option>
+                                  <option value="10">Oct</option>
+                                  <option value="11">Nov</option>
+                                  <option value="12">Dec</option>
+                                </select>
+                                <select aria-label="Day" name="birthday_day" id="day" title="Day" class="_5dba">
+                                  <option value="0" selected="1">Day</option>
+                                  {% for day in day_list %}
+                                  <option value="{{ day }}">{{ day }}</option>
+                                  {% endfor %}
+                                </select>
+                                <select aria-label="Year" name="birthday_year" id="year" title="Year" class="_5dba">
+                                <option value="0" selected="1">Year</option>
+                                {% for year in year_list %}
+                                <option value="{{ year }}">{{ year }}</option>
+                                {% endfor %}
+                                </select></span></span><a class="mlm _58ms" href="#" ajaxify="/help/ajax/reg_birthday" title="Click for more information" rel="async" role="button">Why do I need to provide my birthday?</a><i class="_5dbc _5k_6 img sp_Z_xw_7FDtNv sx_33ab79"></i><i class="_5dbd _5k_7 img sp_Z_xw_7FDtNv sx_826745"></i></div>
+                              </div>
+                              <div class="mtm _5wa2 _5dbb" id="u_0_f"><span class="_5k_3" data-type="radio" data-name="gender_wrapper" id="u_0_g"><span class="_5k_2 _5dba"><input type="radio" name="sex" value="1" id="u_0_d"><label class="_58mt" for="u_0_d">Female</label></span><span class="_5k_2 _5dba"><input type="radio" name="sex" value="2" id="u_0_e"><label class="_58mt" for="u_0_e">Male</label></span></span><i class="_5dbc _5k_6 img sp_Z_xw_7FDtNv sx_33ab79"></i><i class="_5dbd _5k_7 img sp_Z_xw_7FDtNv sx_826745"></i></div>
+                              <div class="_58mu" id="u_0_h">
+                                <p class="_58mv">By clicking Sign Up, you agree to our <a href="/legal/terms" target="_blank" rel="nofollow">Terms</a> and that you have read our <a href="/about/privacy" target="_blank" rel="nofollow">Data Policy</a>, including our <a href="/help/cookies" target="_blank" rel="nofollow">Cookie Use</a>.</p>
+                              </div>
+                              <div class="clearfix">
+                                <button type="submit" class="_6j mvm _6wk _6wl _58mi _3ma _6o _6v" name="websubmit" id="u_0_i">Sign Up</button><span class="hidden_elem _58ml" id="u_0_l"><img class="img" src="{% static 'img/loading.gif' %}" alt="" width="16" height="11"></span></div>
+                            </div>
+                            
+                          </form>
+                          <div id="reg_error" class="_58mn hidden_elem" role="alert">
+                            <div class="_58mo" id="reg_error_inner" tabindex="0">An error occurred. Please try again.</div>
+                          </div>
+                          <!-- todo: make into interests -->
+                          <div id="reg_pages_msg" class="_58mk"><a href="/pages/create/?ref_type=registration_form">Create a Page</a> for a celebrity, band or business.</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="pageFooter" data-referrer="page_footer">
+        <div id="contentCurve"></div>
+        <div role="contentinfo" aria-label="Facebook site links">
+          <table class="uiGrid _51mz navigationGrid" cellspacing="0" cellpadding="0">
+            <tbody>
+              <tr class="_51mx">
+                <td class="_51m- hLeft plm"><a href="/r.php" title="Sign Up for Facespace">Sign Up</a></td>
+                <td class="_51m- hLeft plm"><a href="/login/" title="Log into Facespace">Log In</a></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="mvl copyright">
+          <div>
+            <span> Facespace © 2015</span> 
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>{% extends "base.html" %}
+{% load thumbnail %}
+{% block content %}
+<div class="index">
+    <h1>{{ interest.name }}</h1>
+    {% for child in child_interests.all %}
+    <p><a href="{% url 'interest' child.id %}">{{ child.name }}</a></p><br>
+    {% endfor %}
+    {% thumbnail interest.holds.content_photo "200x200" crop="center" as im %}
+    <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
+    {% endthumbnail %}
+    <br/><a href="{% url 'bid' interest.id %}">Bid on tomorrow's ad ({{interest.bid_price}})</a>
+</div>
+{% endblock %}{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Login to facespace</title>
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/login.css' %}" rel="stylesheet">
+  </head>
+  <body>
+    <div class="container">
+      <form class="form-signin" method="post" action="{% url 'django.contrib.auth.views.login' %}">
+        {% csrf_token %}
+        <h2 class="form-signin-heading">Please sign in</h2>
+        {% if form.errors %}
+        <p><font color="red">Your username and password didn't match. Please try again.</font></p>
+        {% endif %}
+        <label for="inputEmail" class="sr-only">Email address</label>
+        <input id="id_username" class="form-control" name="username" placeholder="Username" required autofocus>
+        <!--<input id="id_username" maxlength="254" name="username" type="text">-->
+        <label for="inputPassword" class="sr-only">Password</label>
+        <input type="password" id="id_password" name="password" class="form-control" placeholder="Password" required>
+        <!--<input id="id_password" name="password" type="password">-->
+        <input type="hidden" name="next" value="{{ next }}" />
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+      </form>
+    </div>
+  </body>
+</html>
+{% extends "base.html" %}
+{% load thumbnail %}
+{% load static %}
+
+{% block css %}
+<link href="{% static 'css/profile.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-sm-8 col-sm-offset-1">
+    <div class="row">
+      <div class="col-sm-3">
+        {% if user.pending_romances %}
+        <h4>Pending Romances</h4>
+        {% for friendship in user.pending_romances %}
+          <a href="{% url 'confirm_romance' romance.id %}">
+          {% thumbnail romance.from_partner.profile_picture.image "30x30" crop="center" as im %}
+          <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
+          {% endthumbnail %}
+          {{ romance.from_partner.get_full_name }}</a><br>
+        {% endfor %}
+        {% endif %}
+        {% if user.pending_friendships %}
+        <h4>Pending Friends</h4>
+        {% for friendship in user.pending_friendships %}
+          <a href="{% url 'confirm' friendship.id %}">
+          {% thumbnail friendship.from_friend.profile_picture.image "30x30" crop="center" as im %}
+          <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
+          {% endthumbnail %}
+          {{ friendship.from_friend.get_full_name }}</a><br>
+        {% endfor %}
+        {% endif %}
+
+        <h4>Friends</h4>
+        {% for friend in user.confirmed_friends %}
+        <a href="{% url 'profile' friend.username %}">
+        {% thumbnail friend.profile_picture.image "30x30" crop="center" as im %}
+        <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
+        {% endthumbnail %}
+        {{ friend.get_full_name }}</a><br>
+        {% endfor %}
+      </div>
+      <div class="col-sm-9">
+        <h1>My Profile</h1>
+        <div class="well inline-headers">
+          {% thumbnail user.profile_picture.image "100x100" crop="center" as im %}
+          <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" class="img-thumbnail">
+          {% endthumbnail %}
+          <h4>{{ user.get_full_name }}</h4>
+
+          <h2>Upload photo</h2>
+          <form method="post" action="{% url 'upload' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ photo_form.caption.label }}: {{ photo_form.caption }}<br>
+            {{ photo_form.image }}<br>
+            <input type="submit" value="Upload">
+          </form>
+          <h2>Post Status</h2>
+          <form method="post" action="{% url 'post_status' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ status_form }}
+            <input type="submit" value="Post">
+          </form>
+        </div>
+
+        <div class="feed">
+        {% for s in statuses %}
+          <div class="post">
+            <div class="header">
+              <a href="{% url 'profile' user.username %}">
+                {% thumbnail s.user.profile_picture.image "40x40" crop="center" as im %}
+                  <img class="mini_prof_pic" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
+                {% endthumbnail %}
+              </a>
+              <a href="{% url 'profile' user.username %}">{{ s.user }}</a>
+            </div>
+            <div class="body">
+              <div class="text">{{ s.text }}</div>
+            </div>
+            <div>
+              <div class="likes"></div>
+              <div class="comments"></div>
+            </div>
+          </div>
+        {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}{% extends "base.html" %}
+{% load thumbnail %}
+{% load static %}
+
+{% block css %}
+<link href="{% static 'css/profile.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-sm-8 col-sm-offset-2">
+    <div class="row">
+      <div class="col-sm-3">
+        <h4>Friends</h4>
+        {% for friend in facespaceuser.confirmed_friends %}
+        <a href="{% url 'profile' friend.username %}">
+        {% thumbnail friend.profile_picture.image "30x30" crop="center" as im %}
+        <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
+        {% endthumbnail %}
+        {{ friend.get_full_name }}</a><br>
+        {% endfor %}
+      </div>
+      <div class="col-sm-9">
+        <h1>Profile</h1>
+        <div class="well inline-headers">
+          {% thumbnail facespaceuser.profile_picture.image "100x100" crop="center" as im %}
+          <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" class="img-thumbnail">
+          {% endthumbnail %}
+          <h4>{{ facespaceuser.get_full_name }}</h4>
+          <h5>Romance: <a href="{% url 'romance_up' facespaceuser.id %}">{{ next_romance }}</a> &#8226; <a href="{% url 'romance_down' facespaceuser.id %}">{{ next_breakup }}</a></h5>
+        </div>
+
+        <div class="feed">
+        {% for s in statuses %}
+          <div class="post">
+            <div class="header">
+              <a href="{% url 'profile' s.user.username %}">
+                {% thumbnail s.user.profile_picture.image "40x40" crop="center" as im %}
+                  <img class="mini_prof_pic" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
+                {% endthumbnail %}
+              </a>
+              <a href="{% url 'profile' user.username %}">{{ s.user }}</a>
+            </div>
+            <div class="body">
+              <div class="text">{{ s.text }}</div>
+            </div>
+            <div>
+              <div class="likes"></div>
+              <div class="comments"></div>
+            </div>
+          </div>
+        {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}{% extends "base.html" %}
+{% load thumbnail %}
+
+{% block content %}
+<div class="index">
+  <h1>Here is {{ facespaceuser.first_name }}'s profile.</h1>
+
+  {% thumbnail facespaceuser.profile_picture.image "100x100" crop="center" as im %}
+    <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
+{% endthumbnail %}
+  <p class="lead">
+  {% if friendship %}
+  <h1>friendship pending</h1>
+  {% else %}
+  <a href="{% url 'friend' facespaceuser.id %}">Friend {{ facespaceuser.get_full_name }}</a>
+  {% endif %}
+  <h2>Friends</h2>
+  <div align="left">
+  {% for friend in facespaceuser.confirmed_friends %}
+    <a href="{% url 'profile' friend.username %}">
+    {% thumbnail friend.profile_picture.image "30x30" crop="center" as im %}
+    <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
+    {% endthumbnail %}
+    {{ friend.get_full_name }}</a><br>
+  {% endfor %}
+</div>
+</div>
+{% endblock %}
+  {% extends "base.html" %}
+{% block content %}
+{% load thumbnail %}
+
+<div class="index">
+<div class="row">
+  <form action="{% url 'search' %}" method="get">
+    <div class="col-md-9 input-group">
+      <input type="text" class="form-control input-lg" name="query" placeholder = "Search for user..." value="{{ keyword }}">
+      <span class="input-group-btn btn-default">
+        <button class="btn btn-lg" type="submit" contenteditable="false" style="background-color: #3b5998; color: #ffffff">SEARCH</button>
+      </span>
+    </div>
+  </form>
+</div>
+<div class="row">
+  <div class="col-md-8">
+    {% if user_results or status_results %}
+    <h3 align="left">Results</h3>
+    <ul class="nav nav-tabs">
+      <li><a href="#people" data-toggle="tab">People</a></li>
+      <li><a href="#posts" data-toggle="tab">Posts</a></li>
+      <li><a href="#interests" data-toggle="tab">Interests</a></li>
+    </ul>
+<!--class="tab-pane fade in active"-->
+    <div class="tab-content">
+      <div class="tab-pane fade in active" id="people">
+        {% for result_user in user_results %}
+        <div class="well" style="height: 140px">
+          <div class="col-md-2">
+           <a href="{% url 'profile' result_user.username %}">
+            {% thumbnail result_user.profile_picture.image "100x100" crop="center" as im %}
+            <img class="mini_prof_pic" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
+            {% endthumbnail %}
+            </a>
+          </div>
+          <div class="col-md-6">
+            <span class="pull-left">
+              <a href="{% url 'profile' result_user.username %}"><h4 style="color: #000000">{{ result_user.get_full_name }}</h4></a>
+            </span>
+          </div>
+          <div class="col-md-4">
+            {% if result_user in user.confirmed_friends %}
+            <span class="glyphicon glyphicon-ok"></span> <b>Friends</b>
+            {% elif result_user.id in user.pending_other_friends %}
+            <b>Friend Request Sent</b>
+            {% elif result_user.id in user.pending_friends %}
+            <a href="{% url 'confirm_username' result_user.username %}"><b>Confirm Friend</b></a>
+            {% elif result_user == user %}
+            {% else %}
+            <a href="{% url 'friend' result_user.id %}"><b>Add Friend</b></a>
+            {% endif %}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      <div class="tab-pane fade" id="posts">
+        {% for result_status in status_results %}
+        <div class="well" style="height: 140px">
+          <div class="col-md-2">
+           <a href="{% url 'profile' result_status.user.username %}">
+            {% thumbnail result_status.user.profile_picture.image "100x100" crop="center" as im %}
+            <img class="mini_prof_pic" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
+            {% endthumbnail %}
+            </a>
+          </div>
+          <div class="col-md-10">
+            <span class="pull-left">
+              <a href="{% url 'profile' result_status.user.username %}"><h4 style="color: #000000">{{ result_status.user.get_full_name }}</h4></a>
+              <br>
+              {{ result_status.text }}
+            </span>
+          </div> 
+        </div>
+        {% endfor %}
+      </div>
+      <div class="tab-pane fade" id="interests">
+<!--        {% for result_interest in interest_results %} 
+        <div class="well" style="height: 100px">
+          <h4> {{ result_interest.name }} </h4>
+        </div>
+        {% endfor %} -->
+      </div>
+      
+    </div>
+    
+    {% else %}
+    <h3 align="left">Your search "{{ keyword }}" didn't match any result.</h3>
+    {% endif %}
+  </div>
+</div>
+</div>
+{% endblock %}{% extends "chat_base.html" %}
+
+{% block "title" %}using subscribe-user{% endblock %}
+
+{% block introduction %}
+<p>Point a second browser onto this URL, login as <em>mary</em> or <em>john</em> and check for message synchronization.</p>
+{% endblock introduction %}
+
+
+{% block control_panel %}
+    <button class="btn btn-primary" id="send_message">Send message</button>
+    to
+    <select class="form-control" id="user" style="display: inline-block; width: auto;">
+    {% for user in users %}
+        <option value="{{ user.username }}">{% firstof user.get_full_name user.username %}</option>
+    {% endfor %}
+    </select>
+{% endblock control_panel %}
+
+{% block script_panel %}
+<script type="text/javascript">
+    jQuery(document).ready(function($) {
+        var ws4redis = WS4Redis({
+            uri: '{{ WEBSOCKET_URI }}foobar?subscribe-user',
+            receive_message: receiveMessage,
+            heartbeat_msg: {{ WS4REDIS_HEARTBEAT }}
+        });
+        var billboard = $('#billboard');
+
+        $("#text_message").keydown(function(event) {
+            if (event.keyCode === 13) {
+                event.preventDefault();
+                sendMessage();
+            }
+        });
+
+        $('#send_message').click(sendMessage);
+
+        // send message to the server using Ajax
+        function sendMessage() {
+            $.post('{% url "user_chat" %}', {
+                user: $('#user').val(),
+                message: $('#text_message').val()
+            });
+        }
+
+        // receive a message though the Websocket from the server
+        function receiveMessage(msg) {
+            billboard.append('<br/>' + msg);
+            billboard.scrollTop(billboard.scrollTop() + 25);
+        }
+    });
+</script>
+{% endblock script_panel %}
