@@ -152,7 +152,10 @@ def newsfeed_list(request):
 
     response = {'code': 200,
                 'posts': posts,
-                'im_url': im32.url
+                'im_url': im32.url,
+                'user_id': request.user.id,
+                'user_full_name': request.user.get_full_name(),
+                'user_name': request.user.username,
                }
 
     return HttpResponse(json.dumps(response, cls=DjangoJSONEncoder))

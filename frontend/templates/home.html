@@ -506,9 +506,9 @@ $(document).ready(function(){
 
           $(("#post_" + p.post_id)).on("keyup", "input.new_comment_text", function(e){
             post_id = p.post_id;
-            im_url = p.im_url
-            user_name = p.user_name;
-            user_full_name = p.full_name;
+            im_url = data.im_url
+            user_name = data.user_name;
+            user_full_name = data.user_full_name;
             if(e.keyCode == 13)
             {
               console.log($(this).val());
