@@ -75,11 +75,11 @@
         {% endfor %}
       </div>
       <div class="tab-pane fade" id="interests">
-<!--        {% for result_interest in interest_results %} 
-        <div class="well" style="height: 100px">
-          <h4> {{ result_interest.name }} </h4>
+        {% for result_interest in interest_results %} 
+        <div class="well" style="height: 75px">
+          <h4 class="text-left" style="color: #000000"><a href="{% url 'interest' result_interest.id %}">{{ result_interest.name }}</a></h4>
         </div>
-        {% endfor %} -->
+        {% endfor %}
       </div>
       
     </div>
