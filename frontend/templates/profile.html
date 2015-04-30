@@ -13,12 +13,13 @@
       <div class="col-sm-3">
         {% if user.pending_romances %}
         <h4>Pending Romances</h4>
-        {% for friendship in user.pending_romances %}
-          <a href="{% url 'confirm_romance' romance.id %}">
+        {% for romance in user.pending_romances %}
           {% thumbnail romance.from_partner.profile_picture.image "30x30" crop="center" as im %}
           <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
           {% endthumbnail %}
-          {{ romance.from_partner.get_full_name }}</a><br>
+          <a href="{% url 'profile' romance.from_partner.username %}"> {{ romance.from_partner.get_full_name }}</a>
+          <a href="{% url 'confirm_romance' romance.id 1 %}"> Confirm</a>
+          <a href="{% url 'confirm_romance' romance.id 0 %}"> Deny</a><br>
         {% endfor %}
         {% endif %}
         {% if user.pending_friendships %}
