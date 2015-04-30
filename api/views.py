@@ -1,11 +1,14 @@
+from itertools import chain
 import json
+from operator import attrgetter
+
 
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http import HttpResponse
 
 from sorl.thumbnail import get_thumbnail
 
-from backend.models import Comment, Like, Status, FaceSpaceUser
+from backend.models import Comment, Like, Status, FaceSpaceUser, Photo
 
 
 def api(request):
@@ -56,25 +59,38 @@ def newsfeed_list(request):
     friends = request.user.confirmed_friends
     friends.append(request.user)
     statuses = Status.objects.filter(user__in=friends).order_by('-time_created')
+    photos = Photo.objects.filter(user__in=friends).order_by('-time_created')
 
-    ps = statuses
+    ps = sorted(chain(statuses, photos), key=attrgetter('time_created'), reverse=True)
+
+    print ps
+
     posts = []
 
     for p in ps:
         post = {}
+        if type(p) is Photo:
+            post['type'] = 'Photo'
+            post['text'] = p.caption
+            post['photo_url'] = get_thumbnail(p.image, "500x500").url
+        else:
+            post['type'] = 'Status'
+            post['text'] = p.text
+        
         post['post_id'] = p.id
         post['user_id'] = p.user.id
         post['user_name'] = p.user.username
         post['full_name'] = p.user.get_full_name()
         post['age'] = '22 mins'
-        post['text'] = p.text
-        post['liked'] = Like.objects.filter(entity=p.id).filter(user=request.user).filter(is_positive=True).exists()
-        post['disliked'] = Like.objects.filter(entity=p.id).filter(user=request.user).filter(is_positive=False).exists()
+        post['liked'] = Like.objects.filter(entity=p.id
+                                   ).filter(user=request.user
+                                   ).filter(is_positive=True).exists()
+        post['disliked'] = Like.objects.filter(entity=p.id
+                                      ).filter(user=request.user
+                                      ).filter(is_positive=False).exists()
 
         user = FaceSpaceUser.objects.get(id=p.user.id)
-
         im40 = get_thumbnail(user.profile_picture.image, '40x40', crop='center')
-
         post['im_url'] = im40.url
 
         likes = []

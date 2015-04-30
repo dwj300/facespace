@@ -427,7 +427,15 @@ $(document).ready(function(){
                         '<span class="post_meta">' + p.age + '</span>' +
                       '</div>' +
                       '<div class="body">' +
-                        '<div class="text">' + p.text + '</div>' +
+                        '<div class="text">';  
+
+          if (p.type === 'Photo')
+          {
+            html += '<img src="' + p.photo_url + '"></img><br><br>'
+          }
+
+          html +=         p.text + 
+                        '</div>' +
                         '<div class="lcs">' +
                           '<a class = "like_button" id = "like_button_' + p.post_id + '">' + (p.liked == 0 ? 'Like' : 'Unlike') + '</a> · <a class = "dislike_button" id = "dislike_button_' + p.post_id + '">' + (p.disliked == 0 ? 'Dislike' : 'Undislike') + '</a> · <a class="new_comment_button" id="new_comment_button_' + p.post_id + '">Comment</a>' +
                         '</div>' +
@@ -443,7 +451,7 @@ $(document).ready(function(){
                         '</div>' +
                         '<div class="new_comment_box">' +
                             '<div class="comment_pic">' +
-                                '<img class="mini_prof_pic" src="' + data.im_url + '" width="32" height="32"><!--todo-->' +
+                                '<img class="mini_prof_pic" src="' + data.im_url + '" width="32" height="32">' +
                             '</div>' +
                             '<div class="new_comment_text_box">' +
                                 '<input id="new_comment_text_' + p.post_id + '" class="new_comment_text" type="text" name="comment" placeholder=" Write a comment...">' +
