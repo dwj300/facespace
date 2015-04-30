@@ -2,9 +2,11 @@ from itertools import chain
 import json
 from operator import attrgetter
 
+from datetime import timedelta
 
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http import HttpResponse
+from django.utils import timezone
 
 from sorl.thumbnail import get_thumbnail
 
@@ -52,6 +54,21 @@ def get_thumbnail_url(request):
     return HttpResponse(json.dumps(response, cls=DjangoJSONEncoder))
 
 
+def calc_age(time_created):
+    delta = timezone.now() - time_created
+
+    if delta < timedelta(minutes=1):
+        return 'now'
+    elif delta < timedelta(hours=1):
+        mins = delta.seconds/60
+        return str(mins) + ' mins' if mins > 1 else ' min'
+    elif delta < timedelta(days=1):
+        hrs = delta.seconds/3600
+        return str(hrs) + ' hrs' if hrs > 1 else ' hr'
+    else:
+        print delta.days
+        return str(delta.days) + (' days' if delta.days > 1 else ' day')
+
 
 def newsfeed_list(request):
     response = {}
@@ -81,7 +98,7 @@ def newsfeed_list(request):
         post['user_id'] = p.user.id
         post['user_name'] = p.user.username
         post['full_name'] = p.user.get_full_name()
-        post['age'] = '22 mins'
+        post['age'] = calc_age(p.time_created)
         post['liked'] = Like.objects.filter(entity=p.id
                                    ).filter(user=request.user
                                    ).filter(is_positive=True).exists()
@@ -120,7 +137,7 @@ def newsfeed_list(request):
                              'user_id': c.user.id,
                              'user_full_name': c.user.get_full_name(),
                              'text': c.text,
-                             'age': '5 days',
+                             'age': calc_age(c.time_created),
                              'im_url': im40.url
                             })
 
